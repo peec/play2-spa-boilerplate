@@ -1,8 +1,20 @@
 require.config({
 	baseUrl: "/assets/javascripts",
-	deps: [
-	       'start'
-	       ],
+	locale: "en",
+	pragmasOnSave: {
+		//removes Handlebars.Parser code (used to compile template strings) set
+		//it to `false` if you need to parse template strings even after build
+		excludeHbsParser : true,
+		// kills the entire plugin set once it's built.
+		excludeHbs: true,
+		// removes i18n precompiler, handlebars and json2
+		excludeAfterBuild: true
+	},
+	hbs: {
+		disableI18n: true,
+		templateExtension: "html",
+		i18nDirectory: '/lang/'
+	},
 	paths : {
 		// Libraries
 		jquery : [ 'vendor/jquery-1.9.0.min' ],
@@ -14,11 +26,14 @@ require.config({
 		json2: 'vendor/json2',
 		
 		
-		// Modules
+		// App Modules
 		homepage: 'module/homepage',
 		
+		
 		// RequireJS Plugins
-		text: 'vendor/text',
+		hbs: 'vendor/hbs',
+		
+		//text: 'vendor/text',
 		
 		// Paths.
 		templates: '/assets/templates'
@@ -46,7 +61,10 @@ require.config({
 			deps : ['jquery'],
 			exports : 'jquery'
 		}
-	}
+	},
+	deps: [
+	       'start'
+	       ]
 });
 
 

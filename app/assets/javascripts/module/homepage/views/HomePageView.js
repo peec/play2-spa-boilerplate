@@ -4,7 +4,7 @@ define([
 'backbone',
 'marionette',
 'handlebars',
-'text!templates/homepage/index.html'
+'hbs!templates/homepage/index'
 ],
 function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 	
@@ -22,5 +22,5 @@ function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 	});
 	
 	
-	return new View();
+	return new View({model: new Backbone.Model({testVar: "This is a var from a model.."})});
 });

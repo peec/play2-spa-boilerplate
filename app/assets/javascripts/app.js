@@ -4,12 +4,12 @@ define([
 'backbone',
 'marionette',
 'handlebars',
-'text!templates/app_view.html'
+'hbs!templates/app_view'
 ],
 function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 
 	Backbone.Marionette.TemplateCache.prototype.compileTemplate = function(rawTemplate) {
-		return Handlebars.compile(rawTemplate);
+		return rawTemplate;
 	};
 
 	var App = new Backbone.Marionette.Application();
@@ -34,7 +34,7 @@ function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 		}
 	});
 
-	var layout = new AppLayout({model: new Backbone.Model({test: "This is a attribute printed by the model."})});
+	var layout = new AppLayout();
 	
 	App.main.show(layout);
 
