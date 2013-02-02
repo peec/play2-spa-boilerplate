@@ -22,5 +22,5 @@ function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 	});
 	
 	
-	return new View({model: new Backbone.Model({testVar: "This is a var from a model.."})});
+	return View;
 });

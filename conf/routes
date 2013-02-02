@@ -15,3 +15,7 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 POST	/api/auth				controllers.api.AuthService.login()
 DELETE	/api/auth				controllers.api.AuthService.logout()
 GET		/api/auth				controllers.api.AuthService.getUserInfo()
+
+
+
+GET		/routes					controllers.Application.routes()

@@ -22,13 +22,19 @@ require.config({
 		backbone : 'vendor/backbone-min',
 		underscore : 'vendor/underscore-min',
 		marionette : 'vendor/backbone.marionette.min',
+		'backbone.wreqr' : 'vendor/backbone.wreqr.min',
+		'backbone.babysitter' : 'vendor/backbone.babysitter.min',
 		handlebars: 'vendor/handlebars',
 		json2: 'vendor/json2',
-		
-		
+		cookie: 'vendor/jquery.cookie',
+
 		// App Modules
 		homepage: 'module/homepage',
 		
+		// Core shortcuts,
+		Model: 'module/core/models/Model',
+		userSession: 'module/core/models/userSession',
+		vent: 'module/core/vent',
 		
 		// RequireJS Plugins
 		hbs: 'vendor/hbs',
@@ -49,10 +55,6 @@ require.config({
 			deps : [ 'jquery', 'underscore' ],
 			exports : 'Backbone'
 		},
-		marionette : {
-			deps : [ 'jquery', 'underscore', 'backbone' ],
-			exports : 'Marionette'
-		},
 		handlebars : {
 			deps : [],
 			exports : 'Handlebars'
@@ -60,6 +62,13 @@ require.config({
 		bootstrap : {
 			deps : ['jquery'],
 			exports : 'jquery'
+		},
+		cookie : {
+			deps : ['jquery'],
+			exports : 'jquery'
+		},
+		marionette: {
+			deps : ['jquery','underscore','backbone']
 		}
 	},
 	deps: [

@@ -13,8 +13,8 @@ function ($, _, Backbone, Marionette, Handlebars, app) {
 	return {
 		
 		index: function(){
-			require(['homepage/views/HomePageView'], function(view){
-				main.content.show(view);
+			require(['homepage/views/HomePageView'], function(View){
+				main.content.show(new View({model: new Backbone.Model({testVar: "This is a var from a model.."})}));
 			});
 		}
 		

@@ -11,4 +11,14 @@ public class Application extends Controller {
         return ok(main.render("Your new application is ready."));
     }
   
+    
+    public static Result routes(){
+    	
+    	
+    	
+    	return ok(Routes.javascriptRouter("jsRoutes",
+    			controllers.api.routes.javascript.AuthService.login(),
+    			controllers.api.routes.javascript.AuthService.logout()
+    			)).as("text/javascript");
+    }
 }

@@ -4,40 +4,51 @@ define([
 'backbone',
 'marionette',
 'handlebars',
-'hbs!templates/app_view'
+'module/core/views/AppLayout',
+'vent'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl) {
+function ($, _, Backbone, Marionette, Handlebars, AppLayout, vent) {
 
+	// Setup global global ajax handler.
+	$.ajaxSetup({
+		statusCode: {
+			// Unauthorized - requires login, but not logged in.
+			401: function() {
+				// If cookie for logged_in is still alive, fire logout vents and remove cookie.
+				if ($.cookie('logged_in')){
+					$.removeCookie('logged_in');
+					vent.trigger('auth:logout');
+					vent.trigger('auth:update');
+				}
+			}
+		}
+	});
+
+	
 	Backbone.Marionette.TemplateCache.prototype.compileTemplate = function(rawTemplate) {
 		return rawTemplate;
 	};
 
-	var App = new Backbone.Marionette.Application();
+	var app = new Backbone.Marionette.Application();
 
-	App.addRegions({
+	app.addRegions({
 		main: '#appStub'
 	});
 
 
 
-	App.on("initialize:after", function(){
+	app.on("initialize:after", function(){
 		if(Backbone.history) {
 			console.log("Starting history.");
 			Backbone.history.start({ pushState: true });
 		}
 	});
 
-	var AppLayout = Backbone.Marionette.Layout.extend({
-		template: tmpl,
-		regions: {
-			content: "#content"
-		}
-	});
-
 	var layout = new AppLayout();
 	
-	App.main.show(layout);
+	app.main.show(layout);
 
-	return App;
+	
+	return app;
 
 });

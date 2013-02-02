@@ -4,8 +4,13 @@ define([
 function (App) {
 	"use strict";
 	
+	// Document is ready. Starting app here
 	$(function() {
 		
+		
+		
+		// Array of all the routers in the modules.
+		// Routers should be self executing and hooked to the apps initialize.
 		var routers = [
 		'homepage/Router'
 		];
