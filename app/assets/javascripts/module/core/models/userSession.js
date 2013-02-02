@@ -1,10 +1,13 @@
-define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model, vent) {
+define(['underscore', 'jquery', 'Model', 'vent','cookie'], function(_, $, Model, vent) {
 	
 	
 	var UserSession = Model.extend({
 		url : "/api/auth",
 		isAuthenticated : function() {
-			return Boolean($.cookie('logged_in'));
+			return Boolean(this.get("id"));
+		},
+		initialize: function(){
+			this.fetch({async:false});
 		},
 		// Only retrieve user object.
 		parse: function (response) {
@@ -13,7 +16,6 @@ define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model
 		login: function(username, password, success, error){
 			this.save({username: username, password: password},{
 				success: function(model, response, options){
-					$.cookie('logged_in', true);
 					vent.trigger('auth:login');
 					vent.trigger('auth:update');
 				},
@@ -21,8 +23,6 @@ define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model
 			});
 		},
 		logout: function(success, error){
-			var that = this;
-			$.removeCookie('logged_in');
 			this.destroy({
 				success: function (model, response, options) {
 					model.clear();
@@ -35,6 +35,25 @@ define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model
 		}
 	});
 
-	return new UserSession();
+	var session = new UserSession();
 
+
+	// Setup global global ajax handler.
+	$.ajaxSetup({
+		statusCode: {
+			// Unauthorized - requires login, but not logged in.
+			// Failsafe, if token is expiered on server.
+			401: function() {
+				if (session.isAuthenticated()){
+					session.clear();
+					vent.trigger('auth:expired');
+					vent.trigger('auth:logout');
+					vent.trigger('auth:update');
+				}
+			}
+		}
+	});
+	
+	
+	return session;
 });

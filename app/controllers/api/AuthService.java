@@ -42,10 +42,7 @@ public class AuthService extends API{
 		if (u != null){
 			ctx().session().put("auth_token", u.loginSecret);
 			
-			ObjectNode o = Json.newObject();
-			o.put("auth_token", u.loginSecret);
-			o.put("user", Json.toJson(u.user));
-			return ok(JsonResp.result(o, "Logged in."));
+			return ok(JsonResp.result(getUserResponse(u.user, u.loginSecret), "Logged in."));
 		}else{
 			return badRequest(JsonResp.error("Email or password is incorrect."));
 		}
@@ -70,10 +67,16 @@ public class AuthService extends API{
 	
 	@SubjectPresent
 	static public Result getUserInfo(){
-		return ok(JsonResp.result(Json.toJson(CurrentUser.current())));
+		return ok(JsonResp.result(Json.toJson(getUserResponse(CurrentUser.current(), getSecurityToken(ctx())))));
 	}
 	
 	
+	static private ObjectNode getUserResponse(AuthorisedUser user, String token){
+		ObjectNode o = Json.newObject();
+		o.put("auth_token", token);
+		o.put("user", Json.toJson(user));
+		return o;
+	}
 
 	/**
 	 * Helper method that returns the auth token from the cookie or session.

@@ -9,20 +9,7 @@ define([
 ],
 function ($, _, Backbone, Marionette, Handlebars, AppLayout, vent) {
 
-	// Setup global global ajax handler.
-	$.ajaxSetup({
-		statusCode: {
-			// Unauthorized - requires login, but not logged in.
-			401: function() {
-				// If cookie for logged_in is still alive, fire logout vents and remove cookie.
-				if ($.cookie('logged_in')){
-					$.removeCookie('logged_in');
-					vent.trigger('auth:logout');
-					vent.trigger('auth:update');
-				}
-			}
-		}
-	});
+	
 
 	
 	Backbone.Marionette.TemplateCache.prototype.compileTemplate = function(rawTemplate) {
@@ -30,7 +17,8 @@ function ($, _, Backbone, Marionette, Handlebars, AppLayout, vent) {
 	};
 
 	var app = new Backbone.Marionette.Application();
-
+	app.loggedIn = false;
+	
 	app.addRegions({
 		main: '#appStub'
 	});
@@ -44,6 +32,8 @@ function ($, _, Backbone, Marionette, Handlebars, AppLayout, vent) {
 		}
 	});
 
+	
+	
 	var layout = new AppLayout();
 	
 	app.main.show(layout);
