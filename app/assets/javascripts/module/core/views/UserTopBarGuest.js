@@ -9,7 +9,7 @@ define([
 function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 	
 	
-	var UserTopBar = Backbone.Marionette.ItemView.extend({
+	var UserTopBarGuest = Backbone.Marionette.ItemView.extend({
 		template: tmpl,
 		ui: {
 			username: '#username',
@@ -29,5 +29,5 @@ function ($, _, Backbone, Marionette, Handlebars, tmpl) {
 	});
 	
 	
-	return UserTopBar;
+	return UserTopBarGuest;
 });

@@ -36,7 +36,7 @@ public class Global extends GlobalSettings {
 //		}
 
 		if (AuthorisedUser.find.findRowCount() == 0) {
-			AuthorisedUser user = new AuthorisedUser("admin","%23icDJ1jx9812jxasEJwj12nxhuScrub");
+			AuthorisedUser user = new AuthorisedUser("admin","admin");
 			user.roles.add(SecurityRole.findByName("admin"));
 			user.save();
 		}

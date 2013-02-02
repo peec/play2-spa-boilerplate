@@ -6,6 +6,10 @@ define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model
 		isAuthenticated : function() {
 			return Boolean($.cookie('logged_in'));
 		},
+		// Only retrieve user object.
+		parse: function (response) {
+			return response.result.user;
+		},
 		login: function(username, password, success, error){
 			this.save({username: username, password: password},{
 				success: function(model, response, options){
@@ -17,13 +21,14 @@ define(['underscore', 'jquery', 'Model', 'vent', 'cookie'], function(_, $, Model
 			});
 		},
 		logout: function(success, error){
+			var that = this;
+			$.removeCookie('logged_in');
 			this.destroy({
-				success: function () {
-					$.removeCookie('logged_in');
-					
+				success: function (model, response, options) {
+					model.clear();
 					vent.trigger('auth:logout');
 					vent.trigger('auth:update');
-					
+					success(model, response, options);
 				},
 				error: error
 			});

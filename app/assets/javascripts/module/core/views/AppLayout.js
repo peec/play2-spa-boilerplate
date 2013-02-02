@@ -7,9 +7,10 @@ define([
 'hbs!templates/app_view',
 'userSession',
 './UserTopBar',
+'./UserTopBarAuthenticated',
 'vent'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl, userSession, UserTopBar, vent) {
+function ($, _, Backbone, Marionette, Handlebars, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent) {
 	
 	
 	
@@ -26,9 +27,9 @@ function ($, _, Backbone, Marionette, Handlebars, tmpl, userSession, UserTopBar,
 		toggleUserBar: function(){
 			var that = this;
 			if (!userSession.isAuthenticated()){
-				that.userbar.show(new UserTopBar({model: userSession}));
+				that.userbar.show(new UserTopBarGuest({model: userSession}));
 			}else{
-				console.log("User is logged in.");
+				that.userbar.show(new UserTopBarAuthenticated({model: userSession}));
 			}
 		},
 		onRender: function(){
