@@ -11,8 +11,14 @@ object ApplicationBuild extends Build {
     // Add your project dependencies here,
     javaCore,
     javaEbean,
+    // For security annotations.
     "be.objectify" %% "deadbolt-java" % "2.1-SNAPSHOT",
-    "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
+    // Production db driver
+    "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+    // For file storage (Amazon S3)
+    "com.amazonaws" % "aws-java-sdk" % "1.3.11",
+    // Apache Commons for simplified UI utils.
+    "commons-io" % "commons-io" % "2.3"
   )
   def customLessEntryPoints(base: File): PathFinder = (
     (base / "app" / "assets" / "stylesheets" / "bootstrap" * "responsive.less") +++ 

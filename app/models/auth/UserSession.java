@@ -18,8 +18,8 @@ import utils.RandomGenerator;
 @Entity
 public class UserSession extends Model{
 
-	// Expire 12 hours
-	static public final int UNTIL_EXPIRE = 3200 * 12; 
+	// Expire after 31 days.
+	static public final int UNTIL_EXPIRE = 3200 * 24 * 31; 
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

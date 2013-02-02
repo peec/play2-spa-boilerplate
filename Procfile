@@ -1,0 +1,1 @@
+web: target/start -Dhttp.port=${PORT} -Dconfig.file=conf/production_heroku.conf ${JAVA_OPTS}
