@@ -6,7 +6,7 @@ define([
 'handlebars',
 'hbs!templates/app_view',
 'userSession',
-'./UserTopBar',
+'./UserTopBarGuest',
 './UserTopBarAuthenticated',
 'vent'
 ],
