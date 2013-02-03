@@ -10,6 +10,13 @@ create table authorised_user (
   constraint pk_authorised_user primary key (id))
 ;
 
+create table s3file (
+  id                        varchar(40) not null,
+  bucket                    varchar(255),
+  name                      varchar(255),
+  constraint pk_s3file primary key (id))
+;
+
 create table security_role (
   id                        bigint not null,
   name                      varchar(255),
@@ -73,6 +80,8 @@ drop table if exists authorised_user;
 drop table if exists authorised_user_security_role;
 
 drop table if exists authorised_user_user_permission;
+
+drop table if exists s3file;
 
 drop table if exists security_role;
 

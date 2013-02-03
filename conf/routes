@@ -17,5 +17,11 @@ DELETE	/api/auth				controllers.api.AuthService.logout()
 GET		/api/auth				controllers.api.AuthService.getUserInfo()
 
 
+# Amazon S3
 
+POST	/api/s3/sign			controllers.api.SignedAmazonS3Handler.sign()
+
+
+
+# Js routes.
 GET		/routes					controllers.Application.routes()
