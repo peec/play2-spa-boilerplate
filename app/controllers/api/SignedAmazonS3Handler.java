@@ -69,8 +69,11 @@ public class SignedAmazonS3Handler extends API{
         r.setContentType(iContentType);
 		r.setExpiration(expDate);
 		r.addRequestParameter("x-amz-acl", "public-read");
-		String signedUrl = S3Plugin.amazonS3.generatePresignedUrl(r).toString();
 		
+		
+		
+		
+		String signedUrl = S3Plugin.amazonS3.generatePresignedUrl(r).toString();
         String uploadUrl = String.format("https://%s.s3.amazonaws.com/%s", S3Plugin.s3Bucket, fileName);
 		String accessKey = Play.application().configuration().getString(S3Plugin.AWS_ACCESS_KEY);
 		

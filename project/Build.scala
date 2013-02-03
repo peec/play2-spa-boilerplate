@@ -28,6 +28,8 @@ object ApplicationBuild extends Build {
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
     requireJs += "main.js",
+    requireJsShim := "main.js",
+    requireJsFolder := "assets/javascripts",
     lessEntryPoints <<= baseDirectory(customLessEntryPoints),
     resolvers += Resolver.url("Objectify Play Repository", url("http://schaloner.github.com/releases/"))(Resolver.ivyStylePatterns),
     resolvers += Resolver.url("Objectify Play Repository - snapshots", url("http://schaloner.github.com/snapshots/"))(Resolver.ivyStylePatterns)

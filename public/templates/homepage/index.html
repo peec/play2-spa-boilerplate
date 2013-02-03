@@ -1,6 +1,24 @@
 <h1>Home page!</h1>
-<div id="clickToHide">Click this text to hide it! Testing view events...</div>
+<div class="row">
 
-<input type="file" id="file" />
-{{testVar}}
+	<div class="span6">
+		<div id="clickToHide">Click this text to hide it! Testing view events...</div>
+	</div>
+	
+	
+	<div class="span6">
+		<div class="userOnly">
+		<input type="file" id="file" />
+			<button class="btn btn-primary" id="uploadFile">Upload</button>
+		<div>
+		<div id="fileUploadBar" style="display: none;" class="progress progress-striped active">
+    		<div class="bar" style="width: 0%;"></div>
+    	</div>
+    	<div id="fileDisplay" style="display: none;"><img src="" alt="" /></div>
+		</div>
+		{{testVar}}
+		</div>
+	
+	</div>
 
+</div>

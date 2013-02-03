@@ -12,8 +12,6 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import utils.JsonResp;
-import views.html.accessFailed;
-
 /**
  * @author Steve Chaloner (steve@objectify.be)
  */
