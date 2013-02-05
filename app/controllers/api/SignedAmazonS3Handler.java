@@ -44,14 +44,14 @@ public class SignedAmazonS3Handler extends API{
 		
 		String iName, iContentType;
 		
-		// Check here for supported content types. eg. only allow "image/png" ... etc.. return badRequest() if fail.
+		iName = input.get("fileName").asText();
+		iName = iName.replace(" ", "-");
+		iName = iName.replace("+","-");
+		iName = iName.replaceAll("[^A-Za-z0-9-_.]", "");
 		
-		try {	
-			iName = URLEncoder.encode(input.get("fileName").asText(),"utf-8");
-			iContentType = input.get("contentType").asText();
-		} catch (UnsupportedEncodingException e) {
-			return internalServerError(JsonResp.error("Unsupported encoding."));
-		}
+		iContentType = input.get("contentType").asText();
+		
+		// Check here for supported content types. eg. only allow "image/png" ... etc.. return badRequest() if fail.
 		
 		
 		ObjectNode o = Json.newObject();
@@ -74,7 +74,15 @@ public class SignedAmazonS3Handler extends API{
 		
 		
 		String signedUrl = S3Plugin.amazonS3.generatePresignedUrl(r).toString();
-        String uploadUrl = String.format("https://%s.s3.amazonaws.com/%s", S3Plugin.s3Bucket, fileName);
+		
+		// Remove this line to use https:
+		signedUrl = "http" + signedUrl.substring(5);
+		
+		// For path style uncomment:
+		// signedUrl = signedUrl.replace(S3Plugin.s3Bucket + ".", "");
+		// signedUrl = signedUrl.replace("amazonaws.com/", "amazonaws.com/"+S3Plugin.s3Bucket.replace(".","/")+"/");
+		
+        String uploadUrl = String.format("http://%s.s3.amazonaws.com/%s", S3Plugin.s3Bucket, fileName);
 		String accessKey = Play.application().configuration().getString(S3Plugin.AWS_ACCESS_KEY);
 		
 
