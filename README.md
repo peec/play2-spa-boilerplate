@@ -10,12 +10,20 @@ Good boilerplate with minimal code to start a SPA.
 ### Integrates the following JS libraries: 
 
  - *requirejs:* For modularity
- - *underscore:* Requirement for backbone and awesome language tools.
+ - *underscore:* Requirement for backbone and awesome language tools + templating system. Precompiled templates in production thanks to underscore-tpl, requirejs r.js and play!
  - *backbone:* Awesome MV* framework for javascript
  - *marionette:* To keep architechture and reduce boilerplate code.
  - *jquery:* To maniplate the DOM.
- - *handlebars:* Awesome templating engine.
 
+
+### Comes with some functionality.
+
+ - Login system.
+ - Uploading to Amazon S3, both backend signing + frontend library.
+ 
+### Ready for HEROKU
+
+Files needed for heroku is already added, just push the code to heroku and set some config variables and youre ready!
 
 ### Bootstrap CSS
 
