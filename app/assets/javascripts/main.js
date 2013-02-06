@@ -1,79 +1,100 @@
 require.config({
-	baseUrl: "/assets/javascripts",
+	
 	locale: "en",
-	pragmasOnSave: {
-		//removes Handlebars.Parser code (used to compile template strings) set
-		//it to `false` if you need to parse template strings even after build
-		excludeHbsParser : true,
-		// kills the entire plugin set once it's built.
-		excludeHbs: true,
-		// removes i18n precompiler, handlebars and json2
-		excludeAfterBuild: true
-	},
-	hbs: {
-		disableI18n: true,
-		templateExtension: "html",
-		i18nDirectory: '/lang/'
-	},
-	paths : {
-		// Libraries
-		jquery : [ 'vendor/jquery-1.9.0.min' ],
-		bootstrap : [ 'vendor/bootstrap.min' ],
-		backbone : 'vendor/backbone-min',
-		underscore : 'vendor/underscore-min',
-		marionette : 'vendor/backbone.marionette.min',
+	
+    pragmasOnSave: {
+    	// Remove tpl library after compile. Not needed after that.
+        excludeTpl: true
+    },
+	
+    paths : {
+		/***
+		 ***  LIBRARIES
+		 ***/
+		
+		'jquery' : [ 'vendor/jquery-1.9.0.min' ],
+		// Twitter bootstrap
+		'bootstrap' : [ 'vendor/bootstrap.min' ],
+		// MVC
+		'backbone' : 'vendor/backbone-min',
+		// Utility belt and templating system (micro templates)
+		'underscore' : 'vendor/underscore-min',
+		// For precompiling html files into js (performance in prod.)
+		'tpl' : 'vendor/tpl',
+		// Built on backbone, provides better architecture
+		'marionette' : 'vendor/backbone.marionette.min',
+		// Event architecture (vent)
 		'backbone.wreqr' : 'vendor/backbone.wreqr.min',
 		'backbone.babysitter' : 'vendor/backbone.babysitter.min',
-		handlebars: 'vendor/handlebars',
-		json2: 'vendor/json2',
-		cookie: 'vendor/jquery.cookie',
+		// Compability 
+		'json2': 'vendor/json2',
+		// Cookie manipulation.
+		'cookie': 'vendor/jquery.cookie',
+		
+		
+		/***
+		 ***  App Modules
+		 ***/
+		'homepage': 'module/homepage',
+		
+		
 
-		// App Modules
-		homepage: 'module/homepage',
+		/***
+		 ***  Core shortcuts
+		 ***/
 		
-		// Core shortcuts,
-		Model: 'module/core/models/Model',
-		userSession: 'module/core/models/userSession',
-		vent: 'module/core/vent',
-		
-		// RequireJS Plugins
-		hbs: 'vendor/hbs',
-		
-		//text: 'vendor/text',
-		
-		// Paths.
-		templates: '/assets/templates'
+		'Model': 'module/core/models/Model',
+		'userSession': 'module/core/models/userSession',
+		'vent': 'module/core/vent'
 	},
 	shim: {
-		jquery : { 
+		'jquery' : { 
 			exports : 'jQuery'
 		},
-		underscore : {
+		'underscore' : {
 			exports : '_'
 		},
-		backbone : {
+		'backbone' : {
 			deps : [ 'jquery', 'underscore' ],
 			exports : 'Backbone'
 		},
-		handlebars : {
-			deps : [],
-			exports : 'Handlebars'
-		},
-		bootstrap : {
+		'bootstrap' : {
 			deps : ['jquery'],
 			exports : 'jquery'
 		},
-		cookie : {
+		'cookie' : {
 			deps : ['jquery'],
 			exports : 'jquery'
 		},
-		marionette: {
+		'marionette': {
 			deps : ['jquery','underscore','backbone']
 		}
-	},
-	deps: [
-	       'start'
-	       ]
+	}
 });
 
+require([
+"app"
+], 
+function (App) {
+	"use strict";
+	
+	// Document is ready. Starting app here
+	$(function() {
+		
+		// Array of all the routers in the modules.
+		// Routers should be self executing and hooked to the apps initialize.
+		var routers = [
+		'homepage/Router'
+		];
+		
+		
+		// Require all routers before start.
+		require(routers, function(){
+			console.log("App bootstrapped.. Starting.");
+			App.start();
+		});
+		
+		
+	});
 
+});

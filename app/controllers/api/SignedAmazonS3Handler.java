@@ -1,26 +1,13 @@
 package controllers.api;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
-
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
-
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.policy.Policy;
-import com.amazonaws.auth.policy.Statement;
-import com.amazonaws.auth.policy.Statement.Effect;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-
 import play.Play;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -28,9 +15,7 @@ import play.mvc.Result;
 import plugins.S3Plugin;
 import utils.JsonResp;
 import controllers.API;
-import sun.misc.BASE64Encoder;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
+
 @SubjectPresent
 public class SignedAmazonS3Handler extends API{
 	

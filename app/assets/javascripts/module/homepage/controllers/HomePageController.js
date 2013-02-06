@@ -3,10 +3,9 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
 'app'
 ],
-function ($, _, Backbone, Marionette, Handlebars, app) {
+function ($, _, Backbone, Marionette, app) {
 	
 	var main = app.main.currentView;
 	

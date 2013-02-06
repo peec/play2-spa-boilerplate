@@ -3,14 +3,13 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
-'hbs!templates/app_view',
+'tpl!templates/app_view.html',
 'userSession',
 './UserTopBarGuest',
 './UserTopBarAuthenticated',
 'vent'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent) {
+function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent) {
 	
 	
 	

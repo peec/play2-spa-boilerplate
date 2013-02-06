@@ -3,11 +3,10 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
 'module/core/views/AppLayout',
 'vent'
 ],
-function ($, _, Backbone, Marionette, Handlebars, AppLayout, vent) {
+function ($, _, Backbone, Marionette, AppLayout, vent) {
 
 	
 

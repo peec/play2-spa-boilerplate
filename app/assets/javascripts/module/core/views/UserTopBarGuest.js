@@ -3,10 +3,9 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
-'hbs!templates/auth/user_not_logged_in'
+'tpl!templates/auth/user_not_logged_in.html'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl) {
+function ($, _, Backbone, Marionette, tmpl) {
 	
 	
 	var UserTopBarGuest = Backbone.Marionette.ItemView.extend({

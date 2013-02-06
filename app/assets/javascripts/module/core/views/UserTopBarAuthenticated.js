@@ -3,10 +3,9 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
-'hbs!templates/auth/user_logged_in_top'
+'tpl!templates/auth/user_logged_in_top.html'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl) {
+function ($, _, Backbone, Marionette, tmpl) {
 	
 	
 	var UserTopBarAuthenticated = Backbone.Marionette.ItemView.extend({

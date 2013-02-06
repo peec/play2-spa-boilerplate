@@ -3,13 +3,12 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'handlebars',
-'hbs!templates/homepage/index',
+'tpl!templates/homepage/index.html',
 'utils/S3Upload',
 'userSession',
 'vent'
 ],
-function ($, _, Backbone, Marionette, Handlebars, tmpl, S3Upload, userSession, vent) {
+function ($, _, Backbone, Marionette, tmpl, S3Upload, userSession, vent) {
 	
 	var View = Backbone.Marionette.Layout.extend({
 		template: tmpl,
