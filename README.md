@@ -16,6 +16,38 @@ Good boilerplate with minimal code to start a SPA.
  - *jquery:* To maniplate the DOM.
 
 
+### Starting in development (with amazon s3 upload functionality)
+
+Signup on Amazon S3 for storage first. Then get your access.key and secret.key.
+
+This is how you start the app in development.
+
+	play \
+	-Daws.access.key="XXXXXXX" \
+	-Daws.secret.key="XXXXXXXXXXX+xxxxxxxxxxxxxxxxxxxxxxxxxx" \
+	run
+
+
+### Starting in production (standalone server)
+
+First install postgresql and create a database.
+Here is a simple example of how to start in production mode. Assets are compiled, all css to one file, minified. All javascript files and templates are precompiled to a single javascript file! Awesome!
+
+	play \
+	-Daws.access.key="XXXXXXX" \
+	-Daws.secret.key="XXXXXXXXXXX+xxxxxxxxxxxxxxxxxxxxxxxxxx" \
+	-Ddb.default.url="jdbc:postgresql://localhost:5432/myapp" \
+	-Ddb.default.user="postgres" \
+	-Ddb.default.password="my_password" \
+	-Dconfig.resource="production.conf" \
+	start
+
+
+### Deploy on heroku.
+
+Setup heroku configurations for AWS_ACCESS_KEY and AWS_SECRET_KEY. Publish it to heroku!
+
+
 ### Comes with some functionality.
 
  - Login system.
