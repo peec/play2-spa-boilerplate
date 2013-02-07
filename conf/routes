@@ -15,6 +15,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 POST	/api/auth				controllers.api.AuthService.login()
 DELETE	/api/auth				controllers.api.AuthService.logout()
 GET		/api/auth				controllers.api.AuthService.getUserInfo()
+POST	/api/user/create		controllers.api.AuthService.register()
+
 
 
 # Amazon S3
@@ -22,6 +24,8 @@ GET		/api/auth				controllers.api.AuthService.getUserInfo()
 POST	/api/s3/sign			controllers.api.SignedAmazonS3Handler.sign()
 
 
+# Test
+GET		/test					controllers.Application.test
 
 # Js routes.
 GET		/routes					controllers.Application.routes()

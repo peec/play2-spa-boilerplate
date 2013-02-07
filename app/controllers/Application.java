@@ -1,6 +1,13 @@
 package controllers;
 
+import java.io.UnsupportedEncodingException;
+
+import org.codehaus.jackson.node.ObjectNode;
+
+import controllers.api.SignedAmazonS3Handler;
+
 import play.*;
+import play.libs.Json;
 import play.mvc.*;
 
 import views.html.*;
@@ -20,5 +27,10 @@ public class Application extends Controller {
     			controllers.api.routes.javascript.AuthService.login(),
     			controllers.api.routes.javascript.AuthService.logout()
     			)).as("text/javascript");
+    }
+    
+    
+    public static Result test(){
+    	return badRequest();
     }
 }

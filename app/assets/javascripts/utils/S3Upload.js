@@ -10,6 +10,7 @@ define([ "jquery" ], function($) {
 		self.signUrl = options.signUrl || "/api/s3/sign";
 		self.file = options.file || "#file";
 
+		
 		self.upload = function() {
 			self.sign($(self.file).get(0).files[0]);
 		};
@@ -27,8 +28,8 @@ define([ "jquery" ], function($) {
 					size : file.size
 				}),
 				success : function(data) {
-					console.log("Signed upload complete, trying to upload. " + data.signed_request);
-					self.uploadToS3(file, data.signed_request, data.url);
+					console.log("Signed upload complete, trying to upload.");
+					self.uploadToS3(file, data);
 				},
 				error : function(xhr, response){
 					self.onError(response);
@@ -36,26 +37,37 @@ define([ "jquery" ], function($) {
 			});
 		};
 
-		self.uploadToS3 = function(file, url, public_url) {
-			var xhr;
-			xhr = self.createCORSRequest('PUT', url);
-
+		self.uploadToS3 = function(file, req) {
+			var xhr = self.createCORSRequest(),
+				public_url = req.fileUrl;
+			
+			
 			if (!xhr) {
 				self.onError('CORS not supported');
 			} else {
-				xhr.onload = function() {
-					if (xhr.status === 200) {
-						self.onProgress(100, 'Upload completed.', public_url, file);
-						return self.onFinish(public_url, file);
-					} else {
-						return self.onError('Upload error: '
-								+ xhr.status, file);
-					}
-				};
-				xhr.onerror = function() {
-					return self.onError('XHR error.', file, xhr);
-				};
-				xhr.upload.onprogress = function(e) {
+				var fd = new FormData();
+				
+				fd.append('key', req.key);
+				fd.append('acl', req.acl); 
+				fd.append('Content-Type', req.contentType);      
+				fd.append('AWSAccessKeyId', req.accessKey);
+				fd.append('policy', req.policy)
+				fd.append('signature',req.signature);
+				fd.append("file",file);
+
+				xhr.addEventListener("load", function(e) {
+					self.onProgress(100, 'Upload completed.', public_url, file);
+					self.onFinish(public_url, file);
+				}, false);
+				
+				xhr.addEventListener("abort", function(e) {
+					self.onAbort('XHR error.', file, e);
+				}, false);
+				xhr.addEventListener("error", function(e) {
+					self.onError('XHR error.', file, e);
+				}, false);
+				
+				xhr.upload.addEventListener("progress", function(e) {
 					var percentLoaded;
 					if (e.lengthComputable) {
 						percentLoaded = Math.round((e.loaded / e.total) * 100);
@@ -63,31 +75,29 @@ define([ "jquery" ], function($) {
 								(percentLoaded === 100 ? 'Finalizing.'
 										: 'Uploading.'), public_url, file);
 					}
-				};
-			}
-			xhr.setRequestHeader('Content-Type', file.type);
-			xhr.setRequestHeader('x-amz-acl', 'public-read');
+				}, false);
 
-			return xhr.send(file);
+				
+				xhr.open('POST', req.uploadUrl, true);
+				return xhr.send(fd);				
+			}
+
 		};
 
-		self.createCORSRequest = function (method, url) {
+		self.createCORSRequest = function () {
 			var xhr = new XMLHttpRequest();
 			if ("withCredentials" in xhr) {
 				// Check if the XMLHttpRequest object has a "withCredentials"
 				// property.
 				// "withCredentials" only exists on XMLHTTPRequest2 objects.
-				xhr.open(method, url, true);
 
 			} else if (typeof XDomainRequest != "undefined") {
 				// Otherwise, check if XDomainRequest.
 				// XDomainRequest only exists in IE, and is IE's way of making
 				// CORS requests.
 				xhr = new XDomainRequest();
-				xhr.open(method, url);
 
 			} else {
-
 				// Otherwise, CORS is not supported by the browser.
 				xhr = null;
 			}
@@ -99,13 +109,17 @@ define([ "jquery" ], function($) {
 		return console.log('onProgress()', percent, status, public_url, file);
 	};
 
-	Upload.prototype.onError = function(status, file, xhr) {
-		return console.log('onError()', status, file, xhr);
+	Upload.prototype.onError = function(status, file, e) {
+		return console.log('onError()', status, file, e);
 	};
 
 	Upload.prototype.onFinish = function(public_url, file) {
 		return console.log('onFinish()', public_url, file);
 	};
+	Upload.prototype.onAbort = function(file, e) {
+		return console.log('onAbort()', public_url, file, e);
+	};
+	
 
 	return Upload;
 });

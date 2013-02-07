@@ -62,6 +62,43 @@ public class AuthService extends API{
 	}
 	
 	
+	/**
+	 * 
+	 * Creates a user account based on JSON input.
+	 * username: the username of the account
+	 * password: the password
+	 * passwordConfirm: must be equal to password
+	 * 
+	 */
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	@SubjectNotPresent
+	static public Result register() {
+		JsonNode body = jsonBody();
+		
+		String
+			username = body.get("username").asText(),
+			password = body.get("password").asText(),
+			passwordConfirm = body.get("passwordConfirm").asText();
+		
+		if (username == null || username.isEmpty()){
+			return badRequest(JsonResp.error("Username is empty."));
+		}
+		if (password == null || password.isEmpty() || password.equals(passwordConfirm)){
+			return badRequest(JsonResp.error("Password confirmation is incorrect."));
+		}
+		
+		try {
+			AuthorisedUser user = AuthorisedUser.createUser(username, passwordConfirm);
+			return ok(JsonResp.result(Json.toJson(user), "Account created."));
+		} catch (ExistingUserException e) {
+			return badRequest(JsonResp.error("Username is already in use."));
+		}
+	}
+	
+	
+	
+	
+	
 	static private ObjectNode getUserResponse(AuthorisedUser user, String token){
 		ObjectNode o = Json.newObject();
 		o.put("auth_token", token);
