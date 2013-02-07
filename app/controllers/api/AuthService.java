@@ -83,7 +83,7 @@ public class AuthService extends API{
 		if (username == null || username.isEmpty()){
 			return badRequest(JsonResp.error("Username is empty."));
 		}
-		if (password == null || password.isEmpty() || password.equals(passwordConfirm)){
+		if (password == null || password.isEmpty() || !password.equals(passwordConfirm)){
 			return badRequest(JsonResp.error("Password confirmation is incorrect."));
 		}
 		
