@@ -19,12 +19,15 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+
+import play.Logger;
 import play.Play;
 import play.libs.Json;
 import play.mvc.BodyParser;
@@ -60,7 +63,7 @@ public class SignedAmazonS3Handler extends API{
 		String fileName = "uploads/" + container.toString() + "/" + iName;
 
 		// Generate when this request expires.
-		DateTime expiery = DateTime.now().plusHours(2);
+		DateTime expiery = DateTime.now().plusYears(2).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
 		String acl = "public-read";
 
 		try {
@@ -136,9 +139,7 @@ public class SignedAmazonS3Handler extends API{
 			conditions = Json.newObject().arrayNode();
 		}
 		public void setExpiery(DateTime expiery) {
-			DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-			// How to get this format?
-			node.put("expiration", "2015-01-31T00:00:00Z");
+			node.put("expiration", expiery.toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z")));
 		}
 		
 		public void addArrayCondition(String... conds){
