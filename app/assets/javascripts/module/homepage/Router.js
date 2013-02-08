@@ -5,12 +5,17 @@ define([
 './controllers/HomePageController', 
 'vent'
 ], function(Backbone, Marionette, app, controller, vent){
-	
 
+	
 	var Router = Backbone.Marionette.AppRouter.extend({
+		// Name of this router used to give the router a meaningful name, used in conjunction with active states in html.
+		name: 'Homepage',
+		
+		// Route configuration
 		appRoutes : {
 			"": "index",
-			"uploads": "uploads"
+			"uploads": "uploads",
+			"uploads/images": "uploadedImages"
 			// Add routes here.
 		}
 	});

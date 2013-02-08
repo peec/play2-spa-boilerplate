@@ -45,7 +45,8 @@ require.config({
 		
 		'Model': 'module/core/models/Model',
 		'userSession': 'module/core/models/userSession',
-		'vent': 'module/core/vent'
+		'vent': 'module/core/vent',
+		'commands': 'module/core/commands'
 	},
 	shim: {
 		'jquery' : { 

@@ -7,9 +7,10 @@ define([
 'userSession',
 './UserTopBarGuest',
 './UserTopBarAuthenticated',
-'vent'
+'vent',
+'commands'
 ],
-function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent) {
+function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent, commands) {
 	
 	
 	var AppLayout = Backbone.Marionette.Layout.extend({
@@ -21,6 +22,7 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		initialize: function(){
 			// Bind for auth token change..
 			vent.on("auth:update", this.toggleUserGenerics, this);
+			
 		},
 		toggleUserGenerics: function(){
 			if (!userSession.isAuthenticated()){

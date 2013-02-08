@@ -3,10 +3,10 @@
 		<div class="navbar-inner">
 			<a class="brand" href="#">My app</a>
 			<ul class="nav">
-				<li class="active"><a href="#">Home</a></li>
-				<li class="userOnly"><a href="#/uploads">Upload Files</a></li>
+				<!-- Note routerLink + data-route will automatically set active class if link is active. -->
+				<li class="routerLink" data-route="Homepage.index"><a href="#">Home</a></li>
+				<li class="routerLink userOnly" data-route="Homepage.uploads"><a href="#/uploads">Upload Files</a></li>
 			</ul>
-			
 			<div class="pull-right" id="regionUserTop"></div>
 		</div>
 	</div>

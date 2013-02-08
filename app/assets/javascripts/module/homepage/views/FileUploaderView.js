@@ -6,9 +6,10 @@ define([
 'tpl!templates/homepage/file_uploader.html',
 'utils/S3Upload',
 'userSession',
-'vent'
+'vent',
+'commands'
 ],
-function ($, _, Backbone, Marionette, tmpl, S3Upload, userSession, vent) {
+function ($, _, Backbone, Marionette, tmpl, S3Upload, userSession, vent, commands) {
 	
 	var View = Backbone.Marionette.Layout.extend({
 		template: tmpl,
@@ -41,6 +42,10 @@ function ($, _, Backbone, Marionette, tmpl, S3Upload, userSession, vent) {
 		uploadStuff: function(){
 			this.ui.uploadBar.show();
 			this.file.upload();
+		},
+		onRender: function(){
+			// Update active links.
+			commands.execute("core:route:update", this);
 		}
 	});
 	
