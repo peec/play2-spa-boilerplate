@@ -36,7 +36,6 @@ function ($, _, Backbone, Marionette, AppLayout, vent, commands) {
 		if (router){
 			var route = (router.name + "." + router.appRoutes[fragment]);
 			
-			console.log("Recieve command core:route:update with " + route + " (fragment:" + fragment + ") ");
 			
 			view.$('.routerLink').each(function(index, item){
 				$(this).removeClass('active');
@@ -50,17 +49,33 @@ function ($, _, Backbone, Marionette, AppLayout, vent, commands) {
 			blackList.push(route);
 			
 			// Recursion of element active.
-			var Finder = function (base) { 
+			var Finder = function (base) {
+				if (!base){
+					return;
+				}
+				
+				// Find parent routes for this current link.
 				var	elParents = base.data('parent-routes') || "";
 				if (elParents){
+					// Split all the parents.
 					elParents = elParents.split(',');
-					
+					// For each parent link, eg. data-route('Homepage.uploads')
 					_.each(elParents, function(elem){
+						// Check if the blackList already contains this, then its no need to do it again.
 						if (!_.contains(blackList, elem)){
+							// Push it to the blacklist.
 							blackList.push(elem);
-							
+							// Find the link and put active state on it.
 							var el = view.$(".routerLink[data-route='" + elem + "']");
-							el.addClass('active');
+							el.each(function(){
+								var par = $(this);
+								var parents = (par.data('parent-routes') || "").split(',');
+								if (!_.contains(parents, elem)){
+									par.addClass('active');
+								}
+							});
+							
+							// Recursive: Now check the parent link for parents again.
 							Finder(el);
 						}
 					});
