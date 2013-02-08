@@ -75,11 +75,12 @@ require.config({
 require([
 "app"
 ], 
-function (App) {
+function (app) {
 	"use strict";
 	
 	// Document is ready. Starting app here
 	$(function() {
+
 		
 		// Array of all the routers in the modules.
 		// Routers should be self executing and hooked to the apps initialize.
@@ -91,10 +92,8 @@ function (App) {
 		// Require all routers before start.
 		require(routers, function(){
 			console.log("App bootstrapped.. Starting.");
-			App.start();
+			app.start();
 		});
-		
-		
 	});
 
 });

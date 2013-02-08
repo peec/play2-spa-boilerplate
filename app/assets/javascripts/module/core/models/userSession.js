@@ -32,6 +32,29 @@ define(['underscore', 'jquery', 'Model', 'vent','cookie'], function(_, $, Model,
 				},
 				error: error
 			});
+		},
+		requireLogin: function(){
+			
+			if (!this.isAuthenticated()){
+				vent.trigger('auth:require-login');
+				return false;
+			
+			}else{
+				// Register current history
+				var currentHistory = Backbone.history.fragment;
+				var callback = function(){
+					if (Backbone.history.fragment === currentHistory){
+						console.log("got logout on require-login route: " + currentHistory + " fire auth:require-login.");
+						vent.off("auth:logout", this); // Unbind..
+						vent.trigger('auth:require-login');
+					}else{
+						// Not relevant anymore.
+						vent.off("auth:logout", this);
+					}
+				};
+				vent.on("auth:logout", callback);
+			}
+			return true;
 		}
 	});
 

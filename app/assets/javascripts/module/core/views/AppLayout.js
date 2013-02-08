@@ -12,7 +12,6 @@ define([
 function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent) {
 	
 	
-	
 	var AppLayout = Backbone.Marionette.Layout.extend({
 		template: tmpl,
 		regions: {
@@ -21,18 +20,19 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		},
 		initialize: function(){
 			// Bind for auth token change..
-			vent.on("auth:update", this.toggleUserBar, this);
+			vent.on("auth:update", this.toggleUserGenerics, this);
 		},
-		toggleUserBar: function(){
-			var that = this;
+		toggleUserGenerics: function(){
 			if (!userSession.isAuthenticated()){
-				that.userbar.show(new UserTopBarGuest({model: userSession}));
+				this.userbar.show(new UserTopBarGuest({model: userSession}));
+				this.$('.userOnly').hide();
 			}else{
-				that.userbar.show(new UserTopBarAuthenticated({model: userSession}));
+				this.userbar.show(new UserTopBarAuthenticated({model: userSession}));
+				this.$('.userOnly').show();
 			}
 		},
 		onRender: function(){
-			this.toggleUserBar();
+			this.toggleUserGenerics();
 		}
 	});
 	

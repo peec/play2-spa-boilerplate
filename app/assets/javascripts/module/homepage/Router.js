@@ -1,21 +1,34 @@
-define(['backbone', 'marionette', 'app', 'homepage/controllers/HomePageController'], function(Backbone, Marionette, App, controller){
+define([
+'backbone', 
+'marionette', 
+'app', 
+'./controllers/HomePageController', 
+'vent'
+], function(Backbone, Marionette, app, controller, vent){
 	
 
 	var Router = Backbone.Marionette.AppRouter.extend({
 		appRoutes : {
-			"": "index"
+			"": "index",
+			"uploads": "uploads"
 			// Add routes here.
 		}
 	});
 
-	App.addInitializer(function() {
+	app.addInitializer(function() {
 		console.log("Init module:homepage.");
-		new Router({
+		// Note, setting homepageRouter to app object.
+		app.routers.homepage = new Router({
 			controller: controller
 		});
-		
 	});
 	
-	
 
+	// If something require login and not logged in require-login is thrown, navigate to home page.
+	vent.on('auth:require-login', function(){
+		console.log("vent.on!auth:require-login");
+		this.routers.homepage.navigate('', { trigger: true });
+	}, app);
+	
+	
 });
