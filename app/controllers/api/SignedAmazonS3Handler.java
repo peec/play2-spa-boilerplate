@@ -28,6 +28,7 @@ import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
+import pkj.no.amazon.s3.AMZS3SignatureGenerator;
 import play.Logger;
 import play.Play;
 import play.libs.Json;
@@ -47,51 +48,41 @@ public class SignedAmazonS3Handler extends API{
 		}
 		JsonNode input = jsonBody();
 
-
-		String iName, iContentType;
-
-		iName = input.get("fileName").asText();
-		iName = iName.replace(" ", "-");
-		iName = iName.replace("+","-");
-		iName = iName.replaceAll("[^A-Za-z0-9-_.]", "");
-
-		iContentType = input.get("contentType").asText();
-
-		// Basic check for content types.
-		String allowedContentTypes[] = {"image/png","image/jpeg","image/gif", "image/png","image/bmp", "image/jpg"};
-		String acl = "public-read";
-		Long maxSize = 7340032L; // 7 mb max size.
+		AMZS3SignatureGenerator gen = new AMZS3SignatureGenerator(
+				Play.application().configuration().getString(S3Plugin.AWS_SECRET_KEY),
+				Play.application().configuration().getString(S3Plugin.AWS_ACCESS_KEY),
+				S3Plugin.s3Bucket);
 		
+		
+		String iName = gen.normalizeFilename(input.get("fileName").asText());
+		String iContentType = input.get("contentType").asText();
+		
+		
+		// Generate when this request expires.
+		String fileName = "uploads/" + UUID.randomUUID().toString() + "/" + iName;
+		
+		// Basic check for content types.
+		String allowedContentTypes[] = {"image/png","image/jpeg","image/gif", "image/png","image/bmp", "image/jpg"};		
 		if (!Arrays.asList(allowedContentTypes).contains(iContentType)){
 			return badRequest(JsonResp.error("Content type of that file is not allowed."));
 		}
+				
 		
+		gen
+			.setAcl("public-read")
+			.setContentSizeRange(1L, 7340032L) // Max 7 megabyte upload.
+			.setContentType(iContentType)
+			.setFilenamePrefix("uploads/");
 		
-		
-		UUID container = UUID.randomUUID();
-		String fileName = "uploads/" + container.toString() + "/" + iName;
-
-		// Generate when this request expires.
-		DateTime expiery = DateTime.now().plusDays(2).withZone(DateTimeZone.UTC).withTime(0, 0, 0, 0);
-
 		try {
-			Policy policy = generatePolicy(fileName, acl, expiery, iContentType, maxSize);
-		
-			String fileUrl = String.format("http://%s.s3.amazonaws.com/%s", S3Plugin.s3Bucket, fileName);
-			String accessKey = Play.application().configuration().getString(S3Plugin.AWS_ACCESS_KEY);
-			// String signedUrl = generateSignedUrl(policy, fileName, iContentType, expiery);
-			String signature = generateSignature(policy);
-			String uplUrl = String.format("http://%s.s3.amazonaws.com", S3Plugin.s3Bucket);
-			
 			
 			ObjectNode o = Json.newObject();
-			o.put("fileUrl", fileUrl);
-			o.put("uploadUrl", uplUrl);
-			//o.put("signed_request", signedUrl);
-			o.put("signature", signature);
-			o.put("policy", policy.checksum());
-			o.put("accessKey", accessKey);
-			o.put("acl", acl);
+			o.put("fileUrl", gen.getFileUrlFor(fileName));
+			o.put("uploadUrl", gen.getUploadUrl());
+			o.put("signature", gen.getEncodedSignature());
+			o.put("policy", gen.getEncodedPolicy());
+			o.put("accessKey", gen.getAccessKey());
+			o.put("acl", gen.getAcl());
 			o.put("key", fileName);
 			o.put("contentType", iContentType);
 			
@@ -105,84 +96,4 @@ public class SignedAmazonS3Handler extends API{
 		}
 	}
 
-	public static Policy generatePolicy(
-			String fileName, 
-			String acl, 
-			DateTime expiery, 
-			String contentType,
-			Long maxSize
-			) throws UnsupportedEncodingException{
-		Policy policy = new Policy();
-		policy.setExpiery(expiery);
-		policy.addObjectCondition("bucket", S3Plugin.s3Bucket);
-		policy.addObjectCondition("acl", acl);
-		policy.addArrayCondition("starts-with","$key","uploads/");
-		policy.addArrayCondition("starts-with", "$Content-Type", contentType);
-		policy.addContentLengthRange(1, maxSize); // 7 mb max.
-		
-		return policy;
-	}
-	private static String generateSignature(Policy pol) throws InvalidKeyException, UnsupportedEncodingException, NoSuchAlgorithmException{
-		String secretKey = Play.application().configuration().getString(S3Plugin.AWS_SECRET_KEY);
-		String policy = pol.checksum();
-		Mac hmac = Mac.getInstance("HmacSHA1");
-		hmac.init(new SecretKeySpec(secretKey.getBytes("UTF-8"), "HmacSHA1"));
-		String signature = new String(
-				Base64.encodeBase64(hmac.doFinal(policy.getBytes("UTF-8")))
-				,"ASCII").replaceAll("\n", "");
-		return signature;
-	}
-
-
-	public static class Policy {
-		ObjectNode node;
-		public ArrayNode conditions;
-		public Policy(){
-			node = Json.newObject();
-			conditions = Json.newObject().arrayNode();
-		}
-		public void setExpiery(DateTime expiery) {
-			node.put("expiration", expiery.toString(DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z")));
-		}
-		
-		public void addArrayCondition(String... conds){
-			ArrayNode o = Json.newObject().arrayNode();
-			for(String cond : conds){
-				o.add(cond);
-			}
-			conditions.add(o);
-		}
-		
-		public void addObjectCondition(String key, String value){
-			ObjectNode o = Json.newObject();
-			o.put(key, value);
-			conditions.add(o);
-		}
-		
-		public void addContentLengthRange(long min, long max){
-			ArrayNode o = Json.newObject().arrayNode();
-			o.add("content-length-range");
-			o.add(min);
-			o.add(max);
-			conditions.add(o);
-		}
-		
-		@Override
-		public String toString(){
-			node.put("conditions", conditions);
-			return node.toString();
-		}
-		
-		public String checksum(){
-			try {
-				String policy = new String(
-						Base64.encodeBase64(toString().getBytes("UTF-8")), "ASCII")
-						.replaceAll("\n", "").replaceAll("\r", "");
-				return policy;
-			} catch (UnsupportedEncodingException e) {
-				return null;
-			}
-		}
-	}
-	
 }

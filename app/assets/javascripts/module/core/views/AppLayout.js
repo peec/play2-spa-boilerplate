@@ -27,10 +27,8 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		toggleUserGenerics: function(){
 			if (!userSession.isAuthenticated()){
 				this.userbar.show(new UserTopBarGuest({model: userSession}));
-				this.$('.userOnly').hide();
 			}else{
 				this.userbar.show(new UserTopBarAuthenticated({model: userSession}));
-				this.$('.userOnly').show();
 			}
 		},
 		onRender: function(){

@@ -42,10 +42,6 @@ function ($, _, Backbone, Marionette, tmpl, S3Upload, userSession, vent, command
 		uploadStuff: function(){
 			this.ui.uploadBar.show();
 			this.file.upload();
-		},
-		onRender: function(){
-			// Update active links.
-			commands.execute("core:route:update", this);
 		}
 	});
 	

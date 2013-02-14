@@ -24,8 +24,9 @@ public class AuthService extends API{
 	 * 
 	 * @return
 	 */
-	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+
 	@SubjectNotPresent
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
 	static public Result login() {
 		JsonNode body = jsonBody();
 		
