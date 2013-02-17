@@ -3,33 +3,12 @@ package controllers.api;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 import java.util.UUID;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-
 import pkj.no.amazon.s3.AMZS3SignatureGenerator;
-import play.Logger;
 import play.Play;
 import play.libs.Json;
 import play.mvc.BodyParser;

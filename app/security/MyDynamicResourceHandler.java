@@ -15,7 +15,7 @@
  */
 package security;
 
-import be.objectify.deadbolt.core.DeadboltAnalyzer;
+
 import be.objectify.deadbolt.core.models.Permission;
 import be.objectify.deadbolt.core.models.Subject;
 import be.objectify.deadbolt.java.DeadboltHandler;

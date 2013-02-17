@@ -1,11 +1,8 @@
-import com.avaje.ebean.Ebean;
+
 import models.auth.*;
 import play.Application;
 import play.GlobalSettings;
 import security.MyRoles;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Steve Chaloner (steve@objectify.be)

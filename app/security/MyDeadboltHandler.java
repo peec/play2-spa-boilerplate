@@ -1,11 +1,9 @@
 package security;
 
 import controllers.api.AuthService;
-import akka.event.slf4j.Logger;
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.DynamicResourceHandler;
 import be.objectify.deadbolt.core.models.Subject;
-import models.auth.AuthorisedUser;
 import models.auth.SessionExpiredException;
 import models.auth.UserSession;
 import play.mvc.Http;
