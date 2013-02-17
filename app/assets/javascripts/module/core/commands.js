@@ -18,15 +18,21 @@ function(Backbone, userSession) {
 	 * More classes can be added based on what user group is on the user etc.
 	 */
 	commands.addHandler('core:auth:gui:change', function(view){
-		if (userSession.isAuthenticated()){
-			view.$('.userOnly').show();
-			view.$('.guestOnly').hide();
-			console.log("GUEST HIDE");
-		}else{
-			view.$('.userOnly').hide();
-			view.$('.guestOnly').show();
-			console.log("GUEST SHOW");
+		
+		var handler = function(){
+			if (userSession.isAuthenticated()){
+				view.$('.userOnly').show();
+				view.$('.guestOnly').hide();
+			}else{
+				view.$('.userOnly').hide();
+				view.$('.guestOnly').show();
+			}
 		}
+		view.on("render", function(){
+			handler();
+			view.listenTo(userSession, "change:id", handler);
+		});
+		
 		
 	});
 
@@ -90,7 +96,6 @@ function(Backbone, userSession) {
 			Finder(base);
 		}
 
-		commands.execute('core:auth:gui:change', view);
 		
 	});
 	

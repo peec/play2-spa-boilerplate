@@ -20,9 +20,6 @@ public class Application extends Controller {
   
     
     public static Result routes(){
-    	
-    	
-    	
     	return ok(Routes.javascriptRouter("jsRoutes",
     			controllers.api.routes.javascript.AuthService.login(),
     			controllers.api.routes.javascript.AuthService.logout()
@@ -31,6 +28,7 @@ public class Application extends Controller {
     
     
     public static Result test(){
-    	return badRequest();
+    	return TODO;
     }
+    
 }

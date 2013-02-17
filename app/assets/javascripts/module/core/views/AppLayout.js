@@ -22,7 +22,8 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		initialize: function(){
 			// Bind for auth token change..
 			vent.on("auth:update", this.toggleUserGenerics, this);
-			
+			// Bind .userOnly + .guestOnly classes.
+			commands.execute('core:auth:gui:change', this);
 		},
 		toggleUserGenerics: function(){
 			if (!userSession.isAuthenticated()){
