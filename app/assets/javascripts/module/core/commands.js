@@ -4,10 +4,12 @@
  */
 define([
 'backbone',
-'userSession', 
+'underscore',
+'userSession',
+'vent',
 'backbone.wreqr'
 ], 
-function(Backbone, userSession) {
+function(Backbone, _, userSession, vent) {
 	var commands = new Backbone.Wreqr.Commands();
 	
 	/**
@@ -39,67 +41,106 @@ function(Backbone, userSession) {
 	
 	/**
 	 * Command: Make links active when current url is correct based on data elements in the html.
-	 * @param router The current running router to check for the current fragment.
+	 * @param router The current router.
 	 * @param view The view that should be checked. Note it will also check sub-views, normally you would put the super view here. 
 	 */
 	commands.addHandler('core:route:update', function(router, view){
-		
-		var fragment = Backbone.history.fragment;
-		if (router){
-			var route = (router.name + "." + router.appRoutes[fragment]);
-			
-			
-			view.$('.routerLink').each(function(index, item){
-				$(this).removeClass('active');
-			});
-	
-			var blackList = [];
-			
-			var base = view.$(".routerLink[data-route='" + route + "']");
-			base.addClass('active');
-			
-			blackList.push(route);
-			
-			// Recursion of element active.
-			var Finder = function (base) {
-				if (!base){
-					return;
-				}
-				
-				// Find parent routes for this current link.
-				var	elParents = base.data('parent-routes') || "";
-				if (elParents){
-					// Split all the parents.
-					elParents = elParents.split(',');
-					// For each parent link, eg. data-route('Homepage.uploads')
-					_.each(elParents, function(elem){
-						// Check if the blackList already contains this, then its no need to do it again.
-						if (!_.contains(blackList, elem)){
-							// Push it to the blacklist.
-							blackList.push(elem);
-							// Find the link and put active state on it.
-							var el = view.$(".routerLink[data-route='" + elem + "']");
-							el.each(function(){
-								var par = $(this);
-								var parents = (par.data('parent-routes') || "").split(',');
-								if (!_.contains(parents, elem)){
-									par.addClass('active');
-								}
-							});
-							
-							// Recursive: Now check the parent link for parents again.
-							Finder(el);
-						}
-					});
-				}
-			}
-			Finder(base);
-		}
+		// Array of breadcrumbs.
 
+		/*
+		 * Structure like so 
+		 * [
+		 *     {url: _URL_, title: _TITLE_},
+		 *     {url: _URL_, title: _TITLE_},
+		 *     ...
+		 *     {url: _CURRENT_URL_, title: _CURRENT_TITLE_}
+		 * ]
+		 */
+		var breadcrumbs = [];
+
+
+
+		var fragment = Backbone.history.fragment;
+		var route = (router.name + "." + router.appRoutes[fragment]);
+
+		// Remove all .routerLink's active class.
+		view.$('.routerLink').each(function(index, item){
+			$(this).removeClass('active');
+		});
+
+		// Create blackList.
+		var blackList = [];
+
+		var base = view.$(".routerLink[data-route='" + route + "']");
+		base.addClass('active');
+
+		var link = base.children(base.data('breadcrumb-element') || "a");
+		if (link.length > 0){
+			// Append breadcrumb.
+			breadcrumbs.push({
+				url: link.attr('href'),
+				name: link.text()
+			});
+		}
+		
+		blackList.push(route);
+
+
+		// Recursion of element active.
+		var Finder = function (base) {
+			if (!base){
+				return;
+			}
+
+			// Find parent routes for this current link.
+			var	elParents = base.data('parent-routes') || "";
+			if (elParents){
+				// Split all the parents.
+				elParents = elParents.split(',');
+				// For each parent link, eg. data-route('Homepage.uploads')
+				_.each(elParents, function(elem){
+					// Check if the blackList already contains this, 
+					// then its no need to do it again.
+					if (!_.contains(blackList, elem)){
+						
+						// Push it to the blacklist.
+						blackList.push(elem);
+						// Find the link and put active state on it.
+						var el = view.$(".routerLink[data-route='" + elem + "']");
+						var link = el.children(el.data('breadcrumb-element') || "a");
+						if (link.length > 0){
+							// Append breadcrumb.
+							breadcrumbs.push({
+								url: link.attr('href'),
+								name: link.text()
+							});
+						}
+						
+						el.each(function(){
+							var par = $(this);
+							var parents = (par.data('parent-routes') || "").split(',');
+							if (!_.contains(parents, elem)){
+								par.addClass('active');
+							}
+						});
+
+						// Recursive: Now check the parent link for parents again.
+						Finder(el);
+					}
+				});
+			}
+		}
+		
+		Finder(base);
+
+		// Reverse it to parent -> current
+		breadcrumbs.reverse();
+		vent.trigger("core:breadcrumbs:update", breadcrumbs);
 		
 	});
 	
-	
+
+
 	
 	return commands;
 });
