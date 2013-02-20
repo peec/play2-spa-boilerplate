@@ -8,16 +8,18 @@ define([
 './UserTopBarGuest',
 './UserTopBarAuthenticated',
 'vent',
-'commands'
+'commands',
+'./BreadcrumbView'
 ],
-function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent, commands) {
+function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTopBarAuthenticated, vent, commands, BreadcrumbView) {
 	
 	
 	var AppLayout = Backbone.Marionette.Layout.extend({
 		template: tmpl,
 		regions: {
 			content: "#content",
-			userbar: '#regionUserTop'
+			userbar: '#regionUserTop',
+			breadcrumbs: '#breadcrumbs'
 		},
 		initialize: function(){
 			// Bind for auth token change..
@@ -34,6 +36,7 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		},
 		onRender: function(){
 			this.toggleUserGenerics();
+			this.breadcrumbs.show(new BreadcrumbView());
 		}
 	});
 	

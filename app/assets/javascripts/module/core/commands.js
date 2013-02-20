@@ -7,9 +7,10 @@ define([
 'underscore',
 'userSession',
 'vent',
+'module/core/models/breadcrumbs',
 'backbone.wreqr'
 ], 
-function(Backbone, _, userSession, vent) {
+function(Backbone, _, userSession, vent, breadcrumbs) {
 	var commands = new Backbone.Wreqr.Commands();
 	
 	/**
@@ -45,21 +46,8 @@ function(Backbone, _, userSession, vent) {
 	 * @param view The view that should be checked. Note it will also check sub-views, normally you would put the super view here. 
 	 */
 	commands.addHandler('core:route:update', function(router, view){
-		// Array of breadcrumbs.
 
-		/*
-		 * Structure like so 
-		 * [
-		 *     {url: _URL_, title: _TITLE_},
-		 *     {url: _URL_, title: _TITLE_},
-		 *     ...
-		 *     {url: _CURRENT_URL_, title: _CURRENT_TITLE_}
-		 * ]
-		 */
-		var breadcrumbs = [];
-
-
-
+		breadcrumbs.reset();
 		var fragment = Backbone.history.fragment;
 		var route = (router.name + "." + router.appRoutes[fragment]);
 
@@ -74,13 +62,10 @@ function(Backbone, _, userSession, vent) {
 		var base = view.$(".routerLink[data-route='" + route + "']");
 		base.addClass('active');
 
-		var link = base.children(base.data('breadcrumb-element') || "a");
+		var link = base.children(base.data('breadcrumb-element') || "a").first();
 		if (link.length > 0){
 			// Append breadcrumb.
-			breadcrumbs.push({
-				url: link.attr('href'),
-				name: link.text()
-			});
+			breadcrumbs.addCrumb(link.attr('href'), link.text());
 		}
 		
 		blackList.push(route);
@@ -107,13 +92,9 @@ function(Backbone, _, userSession, vent) {
 						blackList.push(elem);
 						// Find the link and put active state on it.
 						var el = view.$(".routerLink[data-route='" + elem + "']");
-						var link = el.children(el.data('breadcrumb-element') || "a");
+						var link = el.children(el.data('breadcrumb-element') || "a").first();
 						if (link.length > 0){
-							// Append breadcrumb.
-							breadcrumbs.push({
-								url: link.attr('href'),
-								name: link.text()
-							});
+							breadcrumbs.addCrumb(link.attr('href'), link.text());
 						}
 						
 						el.each(function(){
@@ -132,10 +113,13 @@ function(Backbone, _, userSession, vent) {
 		}
 		
 		Finder(base);
-
-		// Reverse it to parent -> current
-		breadcrumbs.reverse();
-		vent.trigger("core:breadcrumbs:update", breadcrumbs);
+		
+		var lastModel = breadcrumbs.last();
+		if (lastModel){
+			lastModel.set('active', true);
+		}
+		
+		vent.trigger('core:breadcrumbs:update', breadcrumbs);
 		
 	});
 	

@@ -1,0 +1,9 @@
+<ul class="breadcrumb">
+	<% _.each(items, function(item){ %>
+		<% if (item.active === true){ %>
+			<li class="active"><%= item.name %></li>
+		<% }else{ %>
+			<li><a href="<%= item.url %>"><%= item.name %></a> <span class="divider">/</span></li>
+		<% } %>
+	<% }); %> 
+</ul>
