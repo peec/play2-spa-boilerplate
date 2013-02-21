@@ -16,6 +16,7 @@ define(['underscore', 'jquery', 'Model', 'vent','cookie'], function(_, $, Model,
 		login: function(username, password, success, error){
 			this.save({username: username, password: password},{
 				success: function(model, response, options){
+					success(model, response, options);
 					vent.trigger('auth:login');
 					vent.trigger('auth:update');
 				},
