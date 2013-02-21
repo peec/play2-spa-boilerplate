@@ -3,7 +3,7 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'tpl!templates/app_view.html',
+'tpl!templates/core/app_view.html',
 'userSession',
 './UserTopBarGuest',
 './UserTopBarAuthenticated',

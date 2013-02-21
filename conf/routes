@@ -23,9 +23,3 @@ POST	/api/user/create		controllers.api.AuthService.register()
 
 POST	/api/s3/sign			controllers.api.SignedAmazonS3Handler.sign()
 
-
-# Test
-GET		/test					controllers.Application.test
-
-# Js routes.
-GET		/routes					controllers.Application.routes()

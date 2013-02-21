@@ -5,12 +5,14 @@ define([
 'marionette',
 'app',
 'userSession',
-'../views/FileUploadLayout'
+'./views/FileUploadLayout'
 ],
 function ($, _, Backbone, Marionette, app, userSession, UploadLayout) {
 	
+	// Get the current view in the app's main container.
 	var main = app.main.currentView;
 	
+	// Initialize the upload Layout.
 	var uploadLayout = new UploadLayout();
 	
 	return {

@@ -6,13 +6,11 @@ define([
 	var Router = Backbone.Marionette.AppRouter.extend({
 		// Route configuration
 		appRoutes : {
-			"": "index",
-			"uploads": "uploads",
-			"uploads/images": "uploadedImages"
-			// Add routes here.
+			"users/signup": "signup",
+			"users/forgotpassword": "forgotPassword",
+			"users/:name/profile": "userCP"
 		}
 	});
 
-	
 	return Router;
 });

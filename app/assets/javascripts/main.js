@@ -36,6 +36,7 @@ require.config({
 		 ***  App Modules
 		 ***/
 		'homepage': 'module/homepage',
+		'users': 'module/users',
 		
 		
 
@@ -74,7 +75,8 @@ require.config({
 });
 
 require([
-"app"
+"app",
+"bootstrap"
 ], 
 function (app) {
 	"use strict";
@@ -83,15 +85,18 @@ function (app) {
 	$(function() {
 
 		
-		// Array of all the routers in the modules.
-		// Routers should be self executing and hooked to the apps initialize.
-		var routers = [
-		'homepage/Router'
+		// Array of all the bootstrappers in the modules.
+		// See other modules, bootstrap should addInitializer to the "app" 
+		// to initialize a Router object for the module (normally).
+		// A module does not need a router, it can also be some sort of plugin funcitonality.
+		var bootstrappers = [
+		'homepage/bootstrap',
+		'users/bootstrap'
 		];
 		
 		
-		// Require all routers before start.
-		require(routers, function(){
+		// Require all bootstrappers before start.
+		require(bootstrappers, function(){
 			console.log("App bootstrapped.. Starting.");
 			app.start();
 		});

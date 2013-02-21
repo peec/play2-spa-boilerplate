@@ -3,7 +3,7 @@ define([
 'underscore',
 'backbone',
 'marionette',
-'tpl!templates/auth/user_logged_in_top.html'
+'tpl!templates/core/user_logged_in_top.html'
 ],
 function ($, _, Backbone, Marionette, tmpl) {
 	

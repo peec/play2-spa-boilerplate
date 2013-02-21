@@ -1,0 +1,36 @@
+.clickable{
+	cursor: pointer;
+}
+
+/* Variables */
+
+
+// Fix for login box marign on left side.
+@bsLoginBoxHorizontalComponentOffset: 					80px;
+
+
+/* Login box */
+
+.form-horizontal.top_login {
+	.control-group {
+		 margin-bottom: 9px;
+	}
+	.control-label {
+		width: @bsLoginBoxHorizontalComponentOffset - 20;
+	}
+	.controls {
+		margin-left: @bsLoginBoxHorizontalComponentOffset;
+		&:first-child {
+			*padding-left: @bsLoginBoxHorizontalComponentOffset;
+		}
+	}
+	.form-actions {
+		padding-left: @bsLoginBoxHorizontalComponentOffset;
+	}
+	
+	/* Custom */
+	.btn_login {
+		width: 100%;
+	}
+}
+
