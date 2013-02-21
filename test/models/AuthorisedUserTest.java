@@ -20,7 +20,7 @@ public class AuthorisedUserTest {
 
 	@Test
 	public void passwordMatchesPassword () {
-		AuthorisedUser user = new AuthorisedUser("username","pw");
+		AuthorisedUser user = new AuthorisedUser("admin@admin.com","pw");
 		
 		assertThat(BCrypt.checkpw("pw", user.getPassword()))
 			.isEqualTo(true);
@@ -36,20 +36,20 @@ public class AuthorisedUserTest {
 		running(fakeApplication(inMemoryDatabase()), new Runnable(){
 			public void run() {
 				try {
-					AuthorisedUser.createUser("username", "password");
+					AuthorisedUser.createUser("admin2@admin.com", "password");
 				} catch (ExistingUserException e) {}
 				
-				assertThat(AuthorisedUser.authenticate("username", "password", "127.0.0.1"))
+				assertThat(AuthorisedUser.authenticate("admin2@admin.com", "password", "127.0.0.1"))
 					.isNotNull();
 				
-				assertThat(AuthorisedUser.authenticate("username", "pass", "127.0.0.1"))
+				assertThat(AuthorisedUser.authenticate("admin2@admin.com", "pass", "127.0.0.1"))
 					.isNull();
 				
-				AuthorisedUser user = AuthorisedUser.findByUserName("username");
+				AuthorisedUser user = AuthorisedUser.findByEmail("admin2@admin.com");
 				assertThat(user)
 					.isNotNull();
-				assertThat(user.getUserName())
-					.isEqualTo("username");
+				assertThat(user.getEmail())
+					.isEqualTo("admin2@admin.com");
 				
 				
 				

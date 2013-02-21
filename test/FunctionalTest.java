@@ -38,7 +38,7 @@ public class FunctionalTest {
 				
 				// Login
 				ObjectNode o = Json.newObject();
-				o.put("username", "admin");
+				o.put("email", "admin@admin.com");
 				o.put("password", "admin");
 				Result result = jsonReq(o, controllers.api.routes.ref.AuthService.login());
 				
@@ -68,7 +68,7 @@ public class FunctionalTest {
 			public void run() {
 				// Login Success.
 				ObjectNode o = Json.newObject();
-				o.put("username", "test");
+				o.put("email", "test@test.com");
 				o.put("password", "123456");
 				o.put("passwordConfirm", "123456");
 				Result result = jsonReq(o, controllers.api.routes.ref.AuthService.register());
@@ -77,31 +77,31 @@ public class FunctionalTest {
 				
 				// Username must not be empty.
 				o = Json.newObject();
-				o.put("username", "");
+				o.put("email", "");
 				o.put("password", "123456");
 				o.put("passwordConfirm", "123456");
 				result = jsonReq(o, controllers.api.routes.ref.AuthService.register());
 				assertThat(status(result))
 					.isEqualTo(BAD_REQUEST);
 				assertThat(contentAsString(result))
-					.contains("Username is empty");
+					.contains("Email is empty");
 				
 				
 				// Username was just registered and not longer available.
 				o = Json.newObject();
-				o.put("username", "test");
+				o.put("email", "test@test.com");
 				o.put("password", "123456");
 				o.put("passwordConfirm", "123456");
 				result = jsonReq(o, controllers.api.routes.ref.AuthService.register());
 				assertThat(status(result))
 					.isEqualTo(BAD_REQUEST);
 				assertThat(contentAsString(result))
-					.contains("Username is already in use");
+					.contains("Email is already in use");
 				
 				
 				// Password confirmation failed.
 				o = Json.newObject();
-				o.put("username", "test2");
+				o.put("email", "test2@test.com");
 				o.put("password", "Not the same pw.");
 				o.put("passwordConfirm", "123456");
 				result = jsonReq(o, controllers.api.routes.ref.AuthService.register());

@@ -12,7 +12,7 @@ function ($, _, Backbone, Marionette, bootstrapUtils, tmpl) {
 	var UserTopBarGuest = Backbone.Marionette.ItemView.extend({
 		template: tmpl,
 		ui: {
-			username: '#username',
+			email: '#email',
 			password: '#password'
 		},
 		events: {
@@ -22,12 +22,12 @@ function ($, _, Backbone, Marionette, bootstrapUtils, tmpl) {
 			e.preventDefault();
 			var that = this;
 			
-			this.model.login(this.ui.username.val(), this.ui.password.val(), function(){
-				bootstrapUtils.inputErrorClear(that.ui.username);
+			this.model.login(this.ui.email.val(), this.ui.password.val(), function(){
+				bootstrapUtils.inputErrorClear(that.ui.email);
 				bootstrapUtils.inputErrorClear(that.ui.password);
 			}, function(model, resp){
 				var msg = $.parseJSON(resp.responseText);
-				bootstrapUtils.inputError(that.ui.username);
+				bootstrapUtils.inputError(that.ui.email);
 				bootstrapUtils.inputError(that.ui.password, msg.message || "Unknown error");
 			});
 		}

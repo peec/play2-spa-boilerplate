@@ -13,8 +13,8 @@ define(['underscore', 'jquery', 'Model', 'vent','cookie'], function(_, $, Model,
 		parse: function (response) {
 			return response.result.user;
 		},
-		login: function(username, password, success, error){
-			this.save({username: username, password: password},{
+		login: function(email, password, success, error){
+			this.save({email: email, password: password},{
 				success: function(model, response, options){
 					success(model, response, options);
 					vent.trigger('auth:login');

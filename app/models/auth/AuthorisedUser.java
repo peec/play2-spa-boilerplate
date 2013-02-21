@@ -18,7 +18,7 @@ public class AuthorisedUser extends Model implements Subject {
 	@Id
 	private Long id;
 
-	private String userName;
+	private String email;
 
 	
 	private String password;
@@ -34,13 +34,13 @@ public class AuthorisedUser extends Model implements Subject {
 	
 	public AuthorisedUser(){}
 	
-	public AuthorisedUser(String userName, String password){
-		setUserName(userName);
+	public AuthorisedUser(String email, String password){
+		setEmail(email);
 		setPassword(password);
 	}
 	
-	public void setUserName(String userName){
-		this.userName = userName;
+	public void setEmail(String email){
+		this.email = email;
 	}
 	
 	public void setPassword(String password){
@@ -57,8 +57,8 @@ public class AuthorisedUser extends Model implements Subject {
 		this.id = id;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getEmail() {
+		return email;
 	}
 
 	@JsonIgnore
@@ -79,7 +79,7 @@ public class AuthorisedUser extends Model implements Subject {
 	@JsonIgnore
 	@Override
 	public String getIdentifier() {
-		return userName;
+		return email;
 	}
 
 	
@@ -88,8 +88,8 @@ public class AuthorisedUser extends Model implements Subject {
 	
 	
 	
-	public static AuthorisedUser findByUserName(String userName) {
-		return find.where().eq("userName", userName).findUnique();
+	public static AuthorisedUser findByEmail(String email) {
+		return find.where().eq("email", email).findUnique();
 	}
 
 
@@ -100,9 +100,9 @@ public class AuthorisedUser extends Model implements Subject {
 	 * @param password The password (unencrypted)
 	 * @return Returns null on failure, UserAccount object on success.
 	 */
-	public static AuthorisedUser authenticate(String username, String password){
+	public static AuthorisedUser authenticate(String email, String password){
 		// Get user.
-		AuthorisedUser u = findByUserName(username);
+		AuthorisedUser u = findByEmail(email);
 		if (u == null)return null;
 		
 		if (BCrypt.checkpw(password, u.password)){
@@ -120,8 +120,8 @@ public class AuthorisedUser extends Model implements Subject {
 	 * @param host The host name of the client.
 	 * @return null on failure, UserSession object on success.
 	 */
-	public static UserSession authenticate(String userName, String password, String host) {
-		AuthorisedUser u = authenticate(userName, password);
+	public static UserSession authenticate(String email, String password, String host) {
+		AuthorisedUser u = authenticate(email, password);
 		if (u != null){
 			UserSession sess = new UserSession(u, host);
 			sess.save();
@@ -131,9 +131,9 @@ public class AuthorisedUser extends Model implements Subject {
 	}
 	
 	
-	public static AuthorisedUser createUser(String userName, String password) throws ExistingUserException{
-		if (findByUserName(userName) != null)throw new ExistingUserException("Username already exist.");
-		AuthorisedUser user = new AuthorisedUser(userName, password);
+	public static AuthorisedUser createUser(String email, String password) throws ExistingUserException{
+		if (findByEmail(email) != null)throw new ExistingUserException("Username already exist.");
+		AuthorisedUser user = new AuthorisedUser(email, password);
 		user.save();
 		return user;
 	}

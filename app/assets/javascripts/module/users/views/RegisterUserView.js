@@ -12,7 +12,7 @@ function ($, _, Backbone, Marionette, vent, tmpl) {
 	var RegisterUserView = Backbone.Marionette.ItemView.extend({
 		template: tmpl,
 		ui: {
-			username: '#rUsername',
+			email: '#rEmail',
 			password: '#rPassword',
 			confirmPassword: '#rConfirmPassword'
 		},
@@ -22,7 +22,7 @@ function ($, _, Backbone, Marionette, vent, tmpl) {
 		createAccount: function(ev){
 			ev.preventDefault();
 			console.log("TODO with ", 
-					this.ui.username.val(), 
+					this.ui.email.val(), 
 					this.ui.password.val(), 
 					this.ui.confirmPassword.val());
 		}

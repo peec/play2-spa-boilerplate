@@ -21,7 +21,6 @@ public class AuthService extends API{
 	 * Takes JSON to login.
 	 * email
 	 * password
-	 * 
 	 * @return
 	 */
 
@@ -30,7 +29,7 @@ public class AuthService extends API{
 	static public Result login() {
 		JsonNode body = jsonBody();
 		
-		UserSession u = AuthorisedUser.authenticate(body.get("username").asText(), body.get("password").asText(), request().remoteAddress());
+		UserSession u = AuthorisedUser.authenticate(body.get("email").asText(), body.get("password").asText(), request().remoteAddress());
 		if (u != null){
 			ctx().session().put("auth_token", u.loginSecret);
 			
@@ -66,7 +65,7 @@ public class AuthService extends API{
 	/**
 	 * 
 	 * Creates a user account based on JSON input.
-	 * username: the username of the account
+	 * email: the email of the account
 	 * password: the password
 	 * passwordConfirm: must be equal to password
 	 * 
@@ -77,22 +76,22 @@ public class AuthService extends API{
 		JsonNode body = jsonBody();
 		
 		String
-			username = body.get("username").asText(),
+			email = body.get("email").asText(),
 			password = body.get("password").asText(),
 			passwordConfirm = body.get("passwordConfirm").asText();
 		
-		if (username == null || username.isEmpty()){
-			return badRequest(JsonResp.error("Username is empty."));
+		if (email == null || email.isEmpty()){
+			return badRequest(JsonResp.error("Email is empty."));
 		}
 		if (password == null || password.isEmpty() || !password.equals(passwordConfirm)){
 			return badRequest(JsonResp.error("Password confirmation is incorrect."));
 		}
 		
 		try {
-			AuthorisedUser user = AuthorisedUser.createUser(username, passwordConfirm);
+			AuthorisedUser user = AuthorisedUser.createUser(email, passwordConfirm);
 			return ok(JsonResp.result(Json.toJson(user), "Account created."));
 		} catch (ExistingUserException e) {
-			return badRequest(JsonResp.error("Username is already in use."));
+			return badRequest(JsonResp.error("Email is already in use."));
 		}
 	}
 	
