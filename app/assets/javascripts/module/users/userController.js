@@ -10,8 +10,8 @@ function ($, _, Backbone, Marionette, app, userSession) {
 	var main = app.main.currentView;
 	return {
 		signup: function(){
-			require(['users/views/RegisterUserView'], function(View){
-				main.content.show(new View());
+			require(['users/views/RegisterUserView', 'users/models/RegisterUserModel'], function(View, RegisterUserModel){
+				main.content.show(new View({model: new RegisterUserModel()}));
 			});
 		},
 		

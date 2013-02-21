@@ -31,7 +31,10 @@ function ($) {
 		 */
 		inputErrorClear: function(el){
 			var controlGroup = el.closest('.control-group');
-			var controls = el.closest('.controls');
+			this.controlGroupErrorClear(controlGroup);
+		},
+		controlGroupErrorClear: function(controlGroup){
+			var controls = controlGroup.find('.controls');
 			var helpBlock = controls.find('.help-block');
 			
 			controlGroup.removeClass('error');
@@ -43,6 +46,13 @@ function ($) {
 					helpBlock.remove();
 				}
 			}
+		},
+		formErrorClear: function(el){
+			var that = this;
+			var controlGroups = el.find('.control-group');
+			controlGroups.each(function(){
+				that.controlGroupErrorClear($(this));
+			});
 		}
 	}
 });

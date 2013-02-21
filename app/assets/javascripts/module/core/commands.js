@@ -119,6 +119,7 @@ function(Backbone, _, userSession, vent, breadcrumbs) {
 			lastModel.set('active', true);
 		}
 		
+		
 		vent.trigger('core:breadcrumbs:update', breadcrumbs);
 		
 	});
