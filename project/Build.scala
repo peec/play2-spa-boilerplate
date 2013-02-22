@@ -18,7 +18,9 @@ object ApplicationBuild extends Build {
     // For file storage (Amazon S3)
     "com.amazonaws" % "aws-java-sdk" % "1.3.11",
     // Apache Commons for simplified UI utils.
-    "commons-io" % "commons-io" % "2.3"
+    "commons-io" % "commons-io" % "2.3",
+    // For sending emails
+    "com.typesafe" %% "play-plugins-mailer" % "2.1.0"
   )
   def customLessEntryPoints(base: File): PathFinder = (
     (base / "app" / "assets" / "stylesheets" / "bootstrap" * "responsive.less") +++ 

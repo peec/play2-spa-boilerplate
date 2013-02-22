@@ -19,10 +19,13 @@ public class AuthorisedUser extends Model implements Subject {
 	private Long id;
 
 	private String email;
-
 	
 	private String password;
 
+	@JsonIgnore
+	private String activationCode;
+	
+	
 	@ManyToMany(cascade=CascadeType.ALL)	
 	public List<SecurityRole> roles = new ArrayList<SecurityRole>();
 
@@ -82,9 +85,33 @@ public class AuthorisedUser extends Model implements Subject {
 		return email;
 	}
 
+
+	public String getActivationCode() {
+		return activationCode;
+	}
+
 	
+	/**
+	 * Inactivates the user and generating activation code.
+	 */
+	public void generateActivationCode() {
+		this.activationCode = utils.RandomGenerator.nextSessionId(20);
+	}
 	
+	/**
+	 * Activates this user.
+	 */
+	public void activate(){
+		activationCode = null;
+	}
 	
+	/**
+	 * Checks if the current user is activated.
+	 * @return
+	 */
+	public boolean isActive(){
+		return activationCode == null;
+	}
 	
 	
 	
@@ -137,6 +164,7 @@ public class AuthorisedUser extends Model implements Subject {
 		user.save();
 		return user;
 	}
+
 	
 	
 }

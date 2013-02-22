@@ -1,15 +1,21 @@
 package controllers.api;
 
+import java.util.concurrent.Callable;
+
 import actions.CurrentUser;
 import play.mvc.BodyParser;
 import play.mvc.Result;       
 import play.mvc.With;
 import play.mvc.Http.Context;
+import play.libs.F.Promise;
+import play.libs.F;
 import play.libs.Json;
 import utils.JsonResp;
 import org.codehaus.jackson.JsonNode;           
 import org.codehaus.jackson.node.ObjectNode;
 import controllers.API;
+import controllers.routes;
+import mailers.AuthMailer;
 import models.auth.*;
 import be.objectify.deadbolt.java.actions.*;
 
@@ -88,8 +94,39 @@ public class AuthService extends API{
 		}
 		
 		try {
-			AuthorisedUser user = AuthorisedUser.createUser(email, passwordConfirm);
-			return ok(JsonResp.result(Json.toJson(user), "Account created."));
+			final AuthorisedUser user = AuthorisedUser.createUser(email, passwordConfirm);
+			final String baseUrl;			
+			final boolean activationEnabled = play.Play.application().configuration().getBoolean("authentication.require_email_activation");
+			
+			if (activationEnabled) {
+				// Set activation code.
+				user.generateActivationCode();
+				user.save();
+			}
+			baseUrl = routes.Application.index().absoluteURL(request()) + "#/users/confirm/"+user.getId()+"/" +  user.getActivationCode();
+
+			
+			Promise<Boolean> result = play.libs.Akka.future(
+					new Callable<Boolean>() {
+						public Boolean call() {
+							if (activationEnabled){
+								AuthMailer.sendEmailConfirmation(baseUrl, user);
+								return true;
+							}
+							return false;
+						}
+					}
+			);
+			
+			return async(result.map(new F.Function<Boolean, Result> () {
+				@Override
+				public Result apply(Boolean emailSent){
+					ObjectNode node = JsonResp.result(Json.toJson(user), "Account created.");
+					node.put("emailSent", emailSent);
+					return ok(node);
+				}
+			}));
+			
 		} catch (ExistingUserException e) {
 			return badRequest(JsonResp.error("Email is already in use."));
 		}

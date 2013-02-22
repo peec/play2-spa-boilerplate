@@ -1,0 +1,9 @@
+@()(content: Txt)
+
+@content
+__________________
+
+My Company
+http://mywebsite.com
+(+00) 000-000-000
+company@@company.com

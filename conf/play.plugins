@@ -1,2 +1,3 @@
 10000:be.objectify.deadbolt.java.DeadboltPlugin
 1500:plugins.S3Plugin
+1501:com.typesafe.plugin.CommonsMailerPlugin

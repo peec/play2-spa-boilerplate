@@ -1,0 +1,14 @@
+@(user: models.auth.AuthorisedUser, link: String)
+@mailers.template() {
+
+We have gotten a request to register account on our website.
+
+Please click the following link to active your account:
+
+@link
+
+If this email is unknown to you - ignore this email.
+
+Thanks for registering at our site.
+
+}

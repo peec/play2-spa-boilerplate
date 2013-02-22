@@ -7,6 +7,7 @@ create table authorised_user (
   id                        bigint not null,
   email                     varchar(255),
   password                  varchar(255),
+  activation_code           varchar(255),
   constraint pk_authorised_user primary key (id))
 ;
 
