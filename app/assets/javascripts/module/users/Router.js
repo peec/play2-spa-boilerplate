@@ -6,9 +6,10 @@ define([
 	var Router = Backbone.Marionette.AppRouter.extend({
 		// Route configuration
 		appRoutes : {
-			"users/signup": "signup",
-			"users/forgotpassword": "forgotPassword",
-			"users/:name/profile": "userCP"
+			"user/signup": "signup",
+			"user/forgotpassword": "forgotPassword",
+			"user/profile": "userCP",
+			"user/confirm/:userId/:code": "confirmAccount"
 		}
 	});
 

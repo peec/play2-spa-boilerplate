@@ -5,9 +5,11 @@ define([
 'marionette',
 'module/core/views/AppLayout',
 'vent',
-'commands'
+'commands',
+'module/core/models/Configuration',
+'userSession'
 ],
-function ($, _, Backbone, Marionette, AppLayout, vent, commands) {
+function ($, _, Backbone, Marionette, AppLayout, vent, commands, Configuration, userSession) {
 
 	
 	Backbone.Marionette.TemplateCache.prototype.compileTemplate = function(rawTemplate) {
@@ -25,11 +27,19 @@ function ($, _, Backbone, Marionette, AppLayout, vent, commands) {
 	});
 
 	
+	app.config = new Configuration();
+	app.config.fetch({async:false});
+	// Build the user session.
+	if (app.config.get("user")){
+		userSession.set(app.config.get("user"), {silent: true});
+	}
+	
+	
 	// Construct main layout.
 	app.layout = new AppLayout();
 	app.main.show(app.layout);
 	
-
+	
 	// After all initializers , bootstrap app.
 	app.on("initialize:after", function(){
 		
@@ -48,6 +58,7 @@ function ($, _, Backbone, Marionette, AppLayout, vent, commands) {
 		if(Backbone.history) {		
 			console.log("Starting history.");
 			Backbone.history.start({ pushState: false });
+			
 		}
 	});
 	

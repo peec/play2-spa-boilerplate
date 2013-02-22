@@ -6,9 +6,6 @@ define(['underscore', 'jquery', 'Model', 'vent','cookie'], function(_, $, Model,
 		isAuthenticated : function() {
 			return Boolean(this.get("id"));
 		},
-		initialize: function(){
-			this.fetch({async:false});
-		},
 		// Only retrieve user object.
 		parse: function (response) {
 			return response.result.user;

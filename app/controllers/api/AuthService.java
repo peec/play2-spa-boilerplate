@@ -13,6 +13,9 @@ import play.libs.Json;
 import utils.JsonResp;
 import org.codehaus.jackson.JsonNode;           
 import org.codehaus.jackson.node.ObjectNode;
+
+import com.avaje.ebean.Expr;
+
 import controllers.API;
 import controllers.routes;
 import mailers.AuthMailer;
@@ -103,7 +106,7 @@ public class AuthService extends API{
 				user.generateActivationCode();
 				user.save();
 			}
-			baseUrl = routes.Application.index().absoluteURL(request()) + "#/users/confirm/"+user.getId()+"/" +  user.getActivationCode();
+			baseUrl = routes.Application.index().absoluteURL(request());
 
 			
 			Promise<Boolean> result = play.libs.Akka.future(
@@ -132,6 +135,55 @@ public class AuthService extends API{
 		}
 	}
 	
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	@SubjectNotPresent
+	static public Result activateAccount(){
+		JsonNode body = jsonBody();
+		
+		Long userId = body.get("userId").asLong();
+		String activationCode = body.get("activationCode").asText();
+		
+		if (userId == 0 || activationCode == null || activationCode == ""){
+			return badRequest(JsonResp.error("Invalid parameters for activation."));
+		}
+		
+		// Find the user.
+		AuthorisedUser user = AuthorisedUser
+				.find
+				.where()
+				.add(Expr.eq("id", userId))
+				.add(Expr.eq("activationCode", activationCode))
+				.add(Expr.isNotNull("activationCode"))
+				.findUnique();
+		
+		if (user == null){
+			return badRequest(JsonResp.error("Invalid activation or already acivated."));
+		}
+		
+		user.activate();
+		user.save();
+		
+		return ok(JsonResp.success("Activated user account."));
+	}
+	
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	@SubjectPresent
+	static public Result editProfile(){
+		JsonNode body = jsonBody();
+		
+		AuthorisedUser user = CurrentUser.current();
+		
+		String password = body.get("password").asText();
+		if (password != null && password.isEmpty()){
+			user.setPassword(password);
+		}
+		
+		user.save();
+		
+		return ok(JsonResp.result(Json.toJson(user)));
+	}
 	
 	
 	
