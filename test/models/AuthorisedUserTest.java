@@ -48,10 +48,10 @@ public class AuthorisedUserTest {
 				AuthorisedUser user = AuthorisedUser.findByEmail("admin2@admin.com");
 				assertThat(user)
 					.isNotNull();
+				assertThat(user.isActivated())
+					.isFalse();
 				assertThat(user.getEmail())
 					.isEqualTo("admin2@admin.com");
-				
-				
 				
 				
 			}
