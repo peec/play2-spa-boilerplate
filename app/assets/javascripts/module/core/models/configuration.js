@@ -5,5 +5,5 @@ define(['underscore', 'Model'], function(_, Model, vent) {
 	});
 	
 
-	return Configuration;
+	return new Configuration();
 });

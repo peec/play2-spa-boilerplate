@@ -1,5 +1,5 @@
 define(['underscore', 'Model', 'vent'], function(_, Model, vent) {
-	var Model = Backbone.Model.extend({
+	var RegisterUserModel = Model.extend({
 		url: '/api/user/create',
 		validate: function(attrs, options){
 			var error = {};
@@ -20,5 +20,5 @@ define(['underscore', 'Model', 'vent'], function(_, Model, vent) {
 		}
 	});
 
-	return Model;
+	return RegisterUserModel;
 });

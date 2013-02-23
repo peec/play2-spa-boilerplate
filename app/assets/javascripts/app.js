@@ -6,10 +6,10 @@ define([
 'module/core/views/AppLayout',
 'vent',
 'commands',
-'module/core/models/Configuration',
+'module/core/models/configuration',
 'userSession'
 ],
-function ($, _, Backbone, Marionette, AppLayout, vent, commands, Configuration, userSession) {
+function ($, _, Backbone, Marionette, AppLayout, vent, commands, configuration, userSession) {
 
 	
 	Backbone.Marionette.TemplateCache.prototype.compileTemplate = function(rawTemplate) {
@@ -27,7 +27,7 @@ function ($, _, Backbone, Marionette, AppLayout, vent, commands, Configuration, 
 	});
 
 	
-	app.config = new Configuration();
+	app.config = configuration;
 	app.config.fetch({async:false});
 	// Build the user session.
 	if (app.config.get("user")){

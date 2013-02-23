@@ -14,7 +14,11 @@ function ($, _, Backbone, Marionette, app, userSession) {
 				main.content.show(new View({model: new RegisterUserModel()}));
 			});
 		},
-		
+		signupConfirmation: function (userId) {
+			require(['users/views/RegisterUserConfirmationView', 'users/models/ConfirmUserModel'], function(View, ConfirmUserModel){
+				main.content.show(new View({model: new ConfirmUserModel({id: userId})}));
+			});
+		},
 		forgotPassword: function () {
 			require(['users/views/ForgotPasswordStep1View'], function(View){
 				main.content.show(new View());

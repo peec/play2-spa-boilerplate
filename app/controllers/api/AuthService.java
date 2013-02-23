@@ -98,28 +98,9 @@ public class AuthService extends API{
 		
 		try {
 			final AuthorisedUser user = AuthorisedUser.createUser(email, passwordConfirm);
-			final String baseUrl;			
-			final boolean activationEnabled = play.Play.application().configuration().getBoolean("authentication.require_email_activation");
 			
-			if (activationEnabled) {
-				// Set activation code.
-				user.generateActivationCode();
-				user.save();
-			}
-			baseUrl = routes.Application.index().absoluteURL(request());
 
-			
-			Promise<Boolean> result = play.libs.Akka.future(
-					new Callable<Boolean>() {
-						public Boolean call() {
-							if (activationEnabled){
-								AuthMailer.sendEmailConfirmation(baseUrl, user);
-								return true;
-							}
-							return false;
-						}
-					}
-			);
+			Promise<Boolean> result = sendConfirmationEmail(user);
 			
 			return async(result.map(new F.Function<Boolean, Result> () {
 				@Override
@@ -133,6 +114,50 @@ public class AuthService extends API{
 		} catch (ExistingUserException e) {
 			return badRequest(JsonResp.error("Email is already in use."));
 		}
+	}
+	static private Promise<Boolean> sendConfirmationEmail(final AuthorisedUser user){
+		final boolean activationEnabled = play.Play.application().configuration().getBoolean("authentication.require_email_activation");
+		final String baseUrl = routes.Application.index().absoluteURL(request());
+		
+		return play.libs.Akka.future(
+				new Callable<Boolean>() {
+					public Boolean call() {
+						if (activationEnabled){
+							user.generateActivationCode();
+							user.save();
+							AuthMailer.sendEmailConfirmation(baseUrl, user);
+							return true;
+						}
+						return false;
+					}
+				}
+		);
+	}
+	
+	static public Result sendConfirmationEmail(Long id){
+		final AuthorisedUser user = AuthorisedUser
+				.find
+				.where()
+				.add(Expr.eq("id", id))
+				.add(Expr.isNotNull("activationCode"))
+				.findUnique();
+		
+		if (user == null) {
+			return badRequest(JsonResp.error("Account already validated."));
+		}
+		
+		Promise<Boolean> result = sendConfirmationEmail(user);
+		
+		return async(result.map(new F.Function<Boolean, Result> () {
+			@Override
+			public Result apply(Boolean emailSent){
+				ObjectNode result = Json.newObject();
+				result.put("id", user.getId());
+				result.put("emailSent", emailSent);
+				ObjectNode node = JsonResp.result(result, "Registration email sent.");
+				return ok(node);
+			}
+		}));
 	}
 	
 	

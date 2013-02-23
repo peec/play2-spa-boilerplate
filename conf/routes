@@ -15,13 +15,13 @@ GET		/api/config				controllers.api.ConfigService.load()
 
 # Authentication
 
-POST	/api/auth				controllers.api.AuthService.login()
-DELETE	/api/auth				controllers.api.AuthService.logout()
-GET		/api/auth				controllers.api.AuthService.getUserInfo()
-POST	/api/user/create		controllers.api.AuthService.register()
-POST	/api/user/activate		controllers.api.AuthService.activateAccount()
-PUT		/api/user/profile		controllers.api.AuthService.editProfile()
-
+POST	/api/auth						controllers.api.AuthService.login()
+DELETE	/api/auth						controllers.api.AuthService.logout()
+GET		/api/auth						controllers.api.AuthService.getUserInfo()
+POST	/api/user/create				controllers.api.AuthService.register()
+POST	/api/user/activate				controllers.api.AuthService.activateAccount()
+PUT		/api/user/profile				controllers.api.AuthService.editProfile()
+PUT		/api/user/send-confirm/:id		controllers.api.AuthService.sendConfirmationEmail(id: Long)
 
 
 # Amazon S3
