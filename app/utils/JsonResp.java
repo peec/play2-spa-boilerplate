@@ -12,6 +12,12 @@ public class JsonResp {
 	static public ObjectNode error(String msg){
 		return stringResponse(msg, false);
 	}
+	static public ObjectNode error(JsonNode o, String message){
+		ObjectNode ob = objectResponse(o);
+		ob.put("message", message);
+		ob.put("success", false);
+		return ob;
+	}
 	
 	static public ObjectNode result(JsonNode o){
 		return objectResponse(o);

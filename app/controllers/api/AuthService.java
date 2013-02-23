@@ -40,6 +40,17 @@ public class AuthService extends API{
 		
 		UserSession u = AuthorisedUser.authenticate(body.get("email").asText(), body.get("password").asText(), request().remoteAddress());
 		if (u != null){
+			
+			if(!u.user.isActivated()){
+				ObjectNode node = Json.newObject();
+				node.put("accessCodes", Json.toJson(u.user.getConfirmationRequests()));
+				node.put("uid", u.user.getId());
+				
+				u.delete(); // Delete the session.
+				return badRequest(JsonResp.error(node, "Account not confirmed yet."));
+			}
+			
+			
 			ctx().session().put("auth_token", u.loginSecret);
 			
 			return ok(JsonResp.result(getUserResponse(u.user, u.loginSecret), "Logged in."));
@@ -123,28 +134,28 @@ public class AuthService extends API{
 				new Callable<Boolean>() {
 					public Boolean call() {
 						if (activationEnabled){
-							user.generateActivationCode();
+							UserConfirmationRequest ucr = new UserConfirmationRequest();
+							user.getConfirmationRequests().add(ucr);
 							user.save();
-							AuthMailer.sendEmailConfirmation(baseUrl, user);
+							AuthMailer.sendEmailConfirmation(baseUrl, user, ucr);
 							return true;
+						}else {
+							user.setActivated(true);
+							user.save();
+							return false;
 						}
-						return false;
 					}
 				}
 		);
 	}
 	
-	static public Result sendConfirmationEmail(Long id){
-		final AuthorisedUser user = AuthorisedUser
-				.find
-				.where()
-				.add(Expr.eq("id", id))
-				.add(Expr.isNotNull("activationCode"))
-				.findUnique();
+	static public Result sendConfirmationEmail(Long id, final String accessCode){
+		final AuthorisedUser user = UserConfirmationRequest.findByUserIdAndAccessCode(id, accessCode);
 		
 		if (user == null) {
 			return badRequest(JsonResp.error("Account already validated."));
 		}
+		
 		
 		Promise<Boolean> result = sendConfirmationEmail(user);
 		
@@ -153,6 +164,7 @@ public class AuthService extends API{
 			public Result apply(Boolean emailSent){
 				ObjectNode result = Json.newObject();
 				result.put("id", user.getId());
+				result.put("accessCode", accessCode);
 				result.put("emailSent", emailSent);
 				ObjectNode node = JsonResp.result(result, "Registration email sent.");
 				return ok(node);
@@ -174,19 +186,14 @@ public class AuthService extends API{
 		}
 		
 		// Find the user.
-		AuthorisedUser user = AuthorisedUser
-				.find
-				.where()
-				.add(Expr.eq("id", userId))
-				.add(Expr.eq("activationCode", activationCode))
-				.add(Expr.isNotNull("activationCode"))
-				.findUnique();
+		AuthorisedUser user = UserConfirmationRequest.canConfirmAccount(userId, activationCode);
 		
 		if (user == null){
 			return badRequest(JsonResp.error("Invalid activation or already acivated."));
 		}
 		
-		user.activate();
+		user.getConfirmationRequests().clear();
+		user.setActivated(true);
 		user.save();
 		
 		return ok(JsonResp.success("Activated user account."));

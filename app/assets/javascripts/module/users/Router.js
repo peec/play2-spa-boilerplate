@@ -7,7 +7,7 @@ define([
 		// Route configuration
 		appRoutes : {
 			"user/signup": "signup",
-			"user/signup/confirmation/:userId": "signupConfirmation",
+			"user/signup/confirmation/:userId/:accessCode": "signupConfirmation",
 			"user/forgotpassword": "forgotPassword",
 			"user/profile": "userCP",
 			"user/confirm/:userId/:code": "confirmAccount"

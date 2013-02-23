@@ -1,11 +1,11 @@
-@(user: models.auth.AuthorisedUser, baseUrl: String)
+@(user: models.auth.AuthorisedUser, baseUrl: String, ucr: models.auth.UserConfirmationRequest)
 @mailers.template() {
 
 We have gotten a request to register account on our website.
 
 Please click the following link to active your account:
 
-@baseUrl#/user/confirm/@user.getId()/@user.getActivationCode()
+@baseUrl#/user/confirm/@user.getId()/@ucr.getActivationCode()
 
 If this email is unknown to you - ignore this email.
 

@@ -22,15 +22,19 @@ public class AuthorisedUser extends Model implements Subject {
 	
 	private String password;
 
-	@JsonIgnore
-	private String activationCode;
-	
+	private boolean activated;
 	
 	@ManyToMany(cascade=CascadeType.ALL)	
 	public List<SecurityRole> roles = new ArrayList<SecurityRole>();
 
 	@ManyToMany(cascade=CascadeType.ALL)
 	public List<UserPermission> permissions = new ArrayList<UserPermission>();
+
+
+	@OneToMany(cascade=CascadeType.ALL)
+	private List<UserConfirmationRequest> confirmationRequests = new ArrayList<UserConfirmationRequest>();
+
+	
 
 	public static final Finder<Long, AuthorisedUser> find = new Finder<Long, AuthorisedUser>(Long.class, AuthorisedUser.class);
 
@@ -41,6 +45,17 @@ public class AuthorisedUser extends Model implements Subject {
 		setEmail(email);
 		setPassword(password);
 	}
+
+	
+	public List<UserConfirmationRequest> getConfirmationRequests() {
+		return confirmationRequests;
+	}
+
+	public void setConfirmationRequests(
+			List<UserConfirmationRequest> confirmationRequests) {
+		this.confirmationRequests = confirmationRequests;
+	}
+
 	
 	public void setEmail(String email){
 		this.email = email;
@@ -86,32 +101,15 @@ public class AuthorisedUser extends Model implements Subject {
 	}
 
 
-	public String getActivationCode() {
-		return activationCode;
+	public boolean isActivated() {
+		return activated;
 	}
 
-	
-	/**
-	 * Inactivates the user and generating activation code.
-	 */
-	public void generateActivationCode() {
-		this.activationCode = utils.RandomGenerator.nextSessionId(20);
+	@JsonIgnore
+	public void setActivated(boolean activated) {
+		this.activated = activated;
 	}
-	
-	/**
-	 * Activates this user.
-	 */
-	public void activate(){
-		activationCode = null;
-	}
-	
-	/**
-	 * Checks if the current user is activated.
-	 * @return
-	 */
-	public boolean isActive(){
-		return activationCode == null;
-	}
+
 	
 	
 	

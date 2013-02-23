@@ -8,10 +8,12 @@ import com.typesafe.plugin.MailerAPI;
 import controllers.routes;
 
 import models.auth.AuthorisedUser;
+import models.auth.UserConfirmationRequest;
 import views.txt.mailers.auth.*;
+
 public class AuthMailer extends AMailer{
 
-	static public void sendEmailConfirmation(String activateLink, AuthorisedUser user){
+	static public void sendEmailConfirmation(String activateLink, AuthorisedUser user, UserConfirmationRequest ucr){
 		
 		MailerAPI mail = newEmail();
 		
@@ -20,7 +22,7 @@ public class AuthMailer extends AMailer{
 		
 		
 		
-		mail.send(sendEmailConfirmation.render(user, activateLink).body());
+		mail.send(sendEmailConfirmation.render(user, activateLink, ucr).body());
 		
 	}
 	

@@ -66,7 +66,11 @@ function ($, _, Backbone, Marionette, vent, tmpl, bootstrapUtils, config, app) {
 			var that = this;
 			
 			if (config.get("auth").require_email_activation){
-				app.routers.Users.navigate('user/signup/confirmation/' + this.model.get("id"), { trigger: true });
+				app.routers.Users.navigate(
+						'user/signup/confirmation/' + 
+						this.model.get("id") + "/" 
+						+ this.model.get("confirmationRequests")[0].accessCode, 
+						{ trigger: true });
 			} else {
 				require(['tpl!templates/users/register_success.html'], function (tmpl) {
 					that.template = tmpl;

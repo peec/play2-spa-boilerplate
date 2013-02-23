@@ -14,9 +14,9 @@ function ($, _, Backbone, Marionette, app, userSession) {
 				main.content.show(new View({model: new RegisterUserModel()}));
 			});
 		},
-		signupConfirmation: function (userId) {
+		signupConfirmation: function (userId, accessCode) {
 			require(['users/views/RegisterUserConfirmationView', 'users/models/ConfirmUserModel'], function(View, ConfirmUserModel){
-				main.content.show(new View({model: new ConfirmUserModel({id: userId})}));
+				main.content.show(new View({model: new ConfirmUserModel({id: userId, accessCode: accessCode})}));
 			});
 		},
 		forgotPassword: function () {
