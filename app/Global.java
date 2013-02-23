@@ -34,6 +34,7 @@ public class Global extends GlobalSettings {
 
 		if (AuthorisedUser.find.findRowCount() == 0) {
 			AuthorisedUser user = new AuthorisedUser("admin@admin.com","admin");
+			user.setActivated(true);
 			user.roles.add(SecurityRole.findByName("admin"));
 			user.save();
 		}
