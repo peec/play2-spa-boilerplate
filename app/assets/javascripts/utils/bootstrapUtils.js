@@ -23,7 +23,7 @@ function ($) {
 				} else {
 					helpBlock.data('original-message', helpBlock.text());
 				}
-				helpBlock.text(message);
+				helpBlock.html(message);
 			}
 		},
 		/**

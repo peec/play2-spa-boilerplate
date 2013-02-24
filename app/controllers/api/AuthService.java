@@ -149,6 +149,16 @@ public class AuthService extends API{
 		);
 	}
 	
+	
+	static public Result getUserInfoForConfirmation(Long id, final String accessCode){
+		final AuthorisedUser user = UserConfirmationRequest.findByUserIdAndAccessCode(id, accessCode);
+		if (user == null){
+			return badRequest(JsonResp.error("No access to confirmation."));
+		}
+		
+		return ok(JsonResp.result(Json.toJson(user)));
+	}
+	
 	static public Result sendConfirmationEmail(Long id, final String accessCode){
 		final AuthorisedUser user = UserConfirmationRequest.findByUserIdAndAccessCode(id, accessCode);
 		
