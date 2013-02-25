@@ -34,7 +34,12 @@ public class AuthorisedUser extends Model implements Subject {
 	@OneToMany(cascade=CascadeType.ALL)
 	private List<UserConfirmationRequest> confirmationRequests = new ArrayList<UserConfirmationRequest>();
 
+	@OneToMany(cascade=CascadeType.ALL)
+	private List<ForgotPasswordRequest> passwordResets = new ArrayList<ForgotPasswordRequest>();
 	
+
+
+
 
 	public static final Finder<Long, AuthorisedUser> find = new Finder<Long, AuthorisedUser>(Long.class, AuthorisedUser.class);
 
@@ -46,7 +51,13 @@ public class AuthorisedUser extends Model implements Subject {
 		setPassword(password);
 	}
 
-	
+	public List<ForgotPasswordRequest> getPasswordResets() {
+		return passwordResets;
+	}
+
+	public void setPasswordResets(List<ForgotPasswordRequest> passwordResets) {
+		this.passwordResets = passwordResets;
+	}	
 	public List<UserConfirmationRequest> getConfirmationRequests() {
 		return confirmationRequests;
 	}

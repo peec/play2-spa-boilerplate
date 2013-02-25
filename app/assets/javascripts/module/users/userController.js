@@ -20,11 +20,26 @@ function ($, _, Backbone, Marionette, app, userSession) {
 			});
 		},
 		forgotPassword: function () {
-			require(['users/views/ForgotPasswordStep1View'], function(View){
-				main.content.show(new View());
+			require(['users/views/ForgotPasswordStep1View', 'users/models/ForgotPasswordModel'], function(View, ForgotPasswordModel){
+				main.content.show(new View({model: new ForgotPasswordModel()}));
 			});
 		},
-		
+		submitForgotPasswordRequest: function (userId, accessCode) {
+			require(['users/views/ForgotPasswordStep2View', 'users/models/ForgotPasswordModel'], function(View, ForgotPasswordModel){
+				var m = new ForgotPasswordModel({id: userId, accessCode: accessCode});
+				m.fetch({
+					success: function(model, resp){
+						var view = new View({model: model});
+						main.content.show(view);
+					},
+					error: function (model, resp) {
+						// TODO.
+						console.log("Not a valid response.");
+					}
+				});
+				
+			});
+		},
 		userCP: function () {
 			// Require login, redirect if not.
 			if (!userSession.requireLogin())return;

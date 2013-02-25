@@ -8,6 +8,7 @@ import com.typesafe.plugin.MailerAPI;
 import controllers.routes;
 
 import models.auth.AuthorisedUser;
+import models.auth.ForgotPasswordRequest;
 import models.auth.UserConfirmationRequest;
 import views.txt.mailers.auth.*;
 
@@ -23,6 +24,17 @@ public class AuthMailer extends AMailer{
 		
 		
 		mail.send(sendEmailConfirmation.render(user, activateLink, ucr).body());
+		
+	}
+	
+	static public void  sendForgotPassword(String baseUrl, AuthorisedUser user, ForgotPasswordRequest fpr){
+		
+		MailerAPI mail = newEmail();
+		
+		mail.setSubject("Forgotten password request");
+		mail.addRecipient(user.getEmail());
+		
+		mail.send(sendForgotPassword.render(user, baseUrl, fpr).body());
 		
 	}
 	

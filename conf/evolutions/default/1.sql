@@ -11,6 +11,15 @@ create table authorised_user (
   constraint pk_authorised_user primary key (id))
 ;
 
+create table forgot_password_request (
+  id                        bigint not null,
+  authorised_user_id        bigint not null,
+  access_code               varchar(255),
+  created_at                timestamp,
+  valid_to                  timestamp,
+  constraint pk_forgot_password_request primary key (id))
+;
+
 create table security_role (
   id                        bigint not null,
   name                      varchar(255),
@@ -54,6 +63,8 @@ create table authorised_user_user_permission (
 ;
 create sequence authorised_user_seq;
 
+create sequence forgot_password_request_seq;
+
 create sequence security_role_seq;
 
 create sequence user_confirmation_request_seq;
@@ -62,10 +73,12 @@ create sequence user_permission_seq;
 
 create sequence user_session_seq;
 
-alter table user_confirmation_request add constraint fk_user_confirmation_request_a_1 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
-create index ix_user_confirmation_request_a_1 on user_confirmation_request (authorised_user_id);
-alter table user_session add constraint fk_user_session_user_2 foreign key (user_id) references authorised_user (id) on delete restrict on update restrict;
-create index ix_user_session_user_2 on user_session (user_id);
+alter table forgot_password_request add constraint fk_forgot_password_request_aut_1 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_forgot_password_request_aut_1 on forgot_password_request (authorised_user_id);
+alter table user_confirmation_request add constraint fk_user_confirmation_request_a_2 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_user_confirmation_request_a_2 on user_confirmation_request (authorised_user_id);
+alter table user_session add constraint fk_user_session_user_3 foreign key (user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_user_session_user_3 on user_session (user_id);
 
 
 
@@ -87,6 +100,8 @@ drop table if exists authorised_user_security_role;
 
 drop table if exists authorised_user_user_permission;
 
+drop table if exists forgot_password_request;
+
 drop table if exists security_role;
 
 drop table if exists user_confirmation_request;
@@ -98,6 +113,8 @@ drop table if exists user_session;
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists authorised_user_seq;
+
+drop sequence if exists forgot_password_request_seq;
 
 drop sequence if exists security_role_seq;
 

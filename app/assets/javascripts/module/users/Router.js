@@ -9,6 +9,7 @@ define([
 			"user/signup": "signup",
 			"user/signup/confirmation/:userId/:accessCode": "signupConfirmation",
 			"user/forgotpassword": "forgotPassword",
+			"user/forgotpassword/new/:id/:accessCode": "submitForgotPasswordRequest",
 			"user/profile": "userCP",
 			"user/confirm/:userId/:code": "confirmAccount"
 		}

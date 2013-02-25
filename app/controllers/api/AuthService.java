@@ -3,6 +3,7 @@ package controllers.api;
 import java.util.concurrent.Callable;
 
 import actions.CurrentUser;
+import play.Logger;
 import play.mvc.BodyParser;
 import play.mvc.Result;       
 import play.mvc.With;
@@ -228,6 +229,82 @@ public class AuthService extends API{
 	}
 	
 	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	static public Result sendForgotPasswordRequest(){
+		JsonNode body = jsonBody();
+		
+		String email = body.get("email").asText();
+		
+		AuthorisedUser user = AuthorisedUser.findByEmail(email);
+		
+		if (user == null) {
+			return badRequest(JsonResp.error("Could not find user"));
+		}
+		ForgotPasswordRequest fpr = new ForgotPasswordRequest();
+		user.getPasswordResets().add(fpr);
+		
+		user.save();
+		
+		
+		Promise<ForgotPasswordRequest> result = sendForgotPasswordEmail(user, fpr);
+		
+		return async(result.map(new F.Function<ForgotPasswordRequest, Result> () {
+			@Override
+			public Result apply(ForgotPasswordRequest fpr){
+				ObjectNode node = JsonResp.result(Json.toJson(fpr), "Forgot password request sent.");
+				return ok(node);
+			}
+		}));
+	}
+	
+	static private Promise<ForgotPasswordRequest> sendForgotPasswordEmail(final AuthorisedUser user, final ForgotPasswordRequest fpr){
+		final String baseUrl = routes.Application.index().absoluteURL(request());
+		
+		return play.libs.Akka.future(
+				new Callable<ForgotPasswordRequest>() {
+					public ForgotPasswordRequest call() {
+						AuthMailer.sendForgotPassword(baseUrl, user, fpr);
+						return fpr;
+					}
+				}
+		);
+	}
+	
+	@BodyParser.Of(play.mvc.BodyParser.Json.class)
+	static public Result forgotPassword(Long userId, String accessCode){
+		JsonNode body = jsonBody();
+
+		String password = body.get("password").asText();
+		
+		AuthorisedUser user = ForgotPasswordRequest.findByUserIdAndAccessCode(userId, accessCode);
+		
+		if(user == null){
+			return badRequest(JsonResp.error("Forgot password request not successful."));
+		}
+		
+		if (password == null || password.isEmpty()){
+			return badRequest(JsonResp.error("Password was not sent."));
+		}
+		user.setPassword(password);
+		user.getPasswordResets().clear();
+		user.save();
+		
+		return ok(JsonResp.result(Json.toJson(user)));
+	}
+	
+	static public Result getForgotPasswordRequest(Long userId, String accessCode){
+		AuthorisedUser user = ForgotPasswordRequest.findByUserIdAndAccessCode(userId, accessCode);
+		
+		if(user == null){
+			return badRequest(JsonResp.error("Access code invalid."));
+		}
+		ObjectNode o = Json.newObject();
+		o.put("id", userId);
+		o.put("accessCode", accessCode);
+		o.put("user", Json.toJson(user));
+		
+		return ok(JsonResp.result(o));
+	}
 	
 	
 	static private ObjectNode getUserResponse(AuthorisedUser user, String token){

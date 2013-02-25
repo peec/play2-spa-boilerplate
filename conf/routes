@@ -22,7 +22,9 @@ POST	/api/user/create				controllers.api.AuthService.register()
 POST	/api/user/activate				controllers.api.AuthService.activateAccount()
 PUT		/api/user/profile				controllers.api.AuthService.editProfile()
 PUT		/api/user/send-confirm/:id/:accessCode		controllers.api.AuthService.sendConfirmationEmail(id: Long, accessCode: String)
-
+POST	/api/user/forgotpassword					controllers.api.AuthService.sendForgotPasswordRequest()
+PUT		/api/user/forgotpassword/:id/:accessCode	controllers.api.AuthService.forgotPassword(id: Long, accessCode: String)
+GET		/api/user/forgotpassword/:id/:accessCode	controllers.api.AuthService.getForgotPasswordRequest(id: Long, accessCode: String)
 
 # Amazon S3
 

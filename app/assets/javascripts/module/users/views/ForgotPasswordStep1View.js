@@ -11,7 +11,25 @@ function ($, _, Backbone, Marionette, vent, tmpl, bootstrapUtils) {
 	
 	
 	var ForgotPasswordStep1 = Backbone.Marionette.ItemView.extend({
-		template: tmpl
+		template: tmpl,
+		ui: {
+			email: '#fEmail'
+		},
+		events: {
+			'click #bForgotPassword': 'submit'
+		},
+		submit: function(ev){
+			ev.preventDefault();
+			var email = this.ui.email.val();
+			this.model.save({email: email}, {
+				success: function(model, resp){
+					
+				},
+				error: function(model, resp){
+					
+				}
+			});
+		}
 	});
 	
 	
