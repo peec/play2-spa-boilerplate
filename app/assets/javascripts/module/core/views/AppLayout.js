@@ -19,7 +19,7 @@ function ($, _, Backbone, Marionette, tmpl, userSession, UserTopBarGuest,UserTop
 		regions: {
 			content: "#content",
 			userbar: '#regionUserTop',
-			breadcrumbs: '#breadcrumbs'
+			breadcrumbs: '#breadcrumbsContainer'
 		},
 		initialize: function(){
 			// Bind for auth token change..

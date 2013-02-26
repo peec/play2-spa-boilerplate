@@ -1,8 +1,15 @@
 
+import org.codehaus.jackson.node.ObjectNode;
+
 import models.auth.*;
 import play.Application;
 import play.GlobalSettings;
+import play.libs.Json;
+import play.mvc.Controller;
+import play.mvc.Http.RequestHeader;
+import play.mvc.Result;
 import security.MyRoles;
+import utils.JsonResp;
 
 /**
  * @author Steve Chaloner (steve@objectify.be)
@@ -13,24 +20,18 @@ public class Global extends GlobalSettings {
 		fixtures();
 	}
 
+	
+
 	public void fixtures() {
 
+		
 		if (SecurityRole.find.findRowCount() == 0) {
-			
-			
 			for (MyRoles r : MyRoles.values()) {
 				SecurityRole role = new SecurityRole();
 				role.name = r.getName();
 				role.save();
 			}
 		}
-
-//		if (UserPermission.find.findRowCount() == 0) {
-//			UserPermission permission = new UserPermission();
-//			permission.value = "printers.edit";
-//			
-//			permission.save();
-//		}
 
 		if (AuthorisedUser.find.findRowCount() == 0) {
 			AuthorisedUser user = new AuthorisedUser("admin@admin.com","admin");
@@ -39,4 +40,12 @@ public class Global extends GlobalSettings {
 			user.save();
 		}
 	}
+	
+
+	@Override
+	public Result onError(RequestHeader request, Throwable t) {
+		return Controller.internalServerError(JsonResp.error(t.getMessage()));
+	}
+	
+	
 }
