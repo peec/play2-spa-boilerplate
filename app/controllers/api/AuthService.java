@@ -287,6 +287,7 @@ public class AuthService extends API{
 		}
 		user.setPassword(password);
 		user.getPasswordResets().clear();
+		user.saveManyToManyAssociations("passwordResets");
 		user.save();
 		
 		return ok(JsonResp.result(Json.toJson(user)));

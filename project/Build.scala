@@ -20,7 +20,9 @@ object ApplicationBuild extends Build {
     // Apache Commons for simplified UI utils.
     "commons-io" % "commons-io" % "2.3",
     // For sending emails
-    "com.typesafe" %% "play-plugins-mailer" % "2.1.0"
+    "com.typesafe" %% "play-plugins-mailer" % "2.1.0",
+    // For testing emails
+    "com.icegreen" % "greenmail" % "1.3.1b"
   )
   def customLessEntryPoints(base: File): PathFinder = (
     (base / "app" / "assets" / "stylesheets" / "bootstrap" * "responsive.less") +++ 
