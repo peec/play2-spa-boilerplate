@@ -4,9 +4,11 @@ define([
 'backbone',
 'marionette',
 'app',
-'userSession'
+'userSession',
+'module/core/models/breadcrumbs',
+'vent'
 ],
-function ($, _, Backbone, Marionette, app, userSession) {
+function ($, _, Backbone, Marionette, app, userSession, breadcrumbs, vent) {
 	var main = app.main.currentView;
 	return {
 		signup: function () {
@@ -17,6 +19,11 @@ function ($, _, Backbone, Marionette, app, userSession) {
 		signupConfirmation: function (userId, accessCode) {
 			require(['users/views/RegisterUserConfirmationView', 'users/models/ConfirmUserModel'], function(View, ConfirmUserModel){
 				main.content.show(new View({model: new ConfirmUserModel({id: userId, accessCode: accessCode})}));
+				breadcrumbs.reset();
+				breadcrumbs.addCrumb('#user/signup/confirmation/'+userId+'/'+accessCode, 'Email confirmation', {active: true});
+				breadcrumbs.addCrumb('#/user/signup', 'Sign Up');
+				vent.trigger('core:breadcrumbs:update', breadcrumbs);
+				
 			});
 		},
 		forgotPassword: function () {
