@@ -55,14 +55,6 @@ public class AuthFunctionalTest {
 
 	
 
-	@Test
-	public void callIndexHomePage() {
-		Result result = callAction(controllers.routes.ref.Application.index());
-		assertThat(status(result)).isEqualTo(OK);
-		assertThat(contentType(result)).isEqualTo("text/html");
-		assertThat(charset(result)).isEqualTo("utf-8");
-	}
-
 
 	@Test
 	public void loginAndLogoutUser() {
@@ -163,12 +155,35 @@ public class AuthFunctionalTest {
 		assertThat(status(result))
 			.isEqualTo(OK);
 
+		
 		// Should have gotten one mail.
 		assertThat(greenMail.waitForIncomingEmail(5000, 1))
 			.isTrue();
 		assertThat(greenMail.getReceivedMessages()[0].getSubject())
 			.isEqualTo("User activation");
-	
+		
+		
+		AuthorisedUser user = AuthorisedUser.findByEmail("test@test.com");
+		
+		assertThat(user.isActivated())
+			.isFalse();
+		
+		assertThat(user.getConfirmationRequests().size())
+			.isEqualTo(1);
+		// Activate user - Error
+		o = Json.newObject();
+		o.put("userId", user.getId());
+		o.put("activationCode", "this_is wrong!");		
+		result = AppHelpers.jsonReq(o, controllers.api.routes.ref.AuthService.activateAccount());
+		assertThat(status(result))
+			.isEqualTo(BAD_REQUEST);
+		// Activate user - Success
+		o = Json.newObject();
+		o.put("userId", user.getId());
+		o.put("activationCode", user.getConfirmationRequests().get(0).getActivationCode());
+		result = AppHelpers.jsonReq(o, controllers.api.routes.ref.AuthService.activateAccount());
+		assertThat(status(result))
+			.isEqualTo(OK);
 		
 		
 		// Username must not be empty.
