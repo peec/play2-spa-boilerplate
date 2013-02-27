@@ -3,6 +3,7 @@ Play 2 - Single Page Application - boilerplate
 
 
 
+
 Play 2.1+ boilerplate for Single-page application websites. 
 
 Good boilerplate with minimal code to start a SPA.
