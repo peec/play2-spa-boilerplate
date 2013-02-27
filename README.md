@@ -1,7 +1,7 @@
 Play 2 - Single Page Application - boilerplate
 =====================
 
-
+[![Build Status](http://ci.pkj.no/job/play2-spa-boilerplate/badge/icon)](http://ci.pkj.no/job/play2-spa-boilerplate/)
 
 
 Play 2.1+ boilerplate for Single-page application websites. 
