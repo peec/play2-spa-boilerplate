@@ -1,0 +1,10 @@
+@(baseUrl: String, user: models.auth.AuthorisedUser, ecr: models.auth.EmailChangeRequest)
+@mailers.template() {
+
+Somebody (or you) have asked to change your email address to this email (@ecr.getEmail()).
+
+To confirm this change, please follow the link below:
+@baseUrl#/user/profile/emailchange/@user.getId()/@ecr.getSecretCode()
+
+If this email is unknown to you - ignore this email.
+}

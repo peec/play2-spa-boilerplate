@@ -36,7 +36,9 @@ public class AuthorisedUser extends Model implements Subject {
 
 	@OneToMany(cascade=CascadeType.ALL)
 	private List<ForgotPasswordRequest> passwordResets = new ArrayList<ForgotPasswordRequest>();
-	
+
+	@OneToOne(cascade=CascadeType.ALL)
+	private EmailChangeRequest emailChange;
 
 
 
@@ -53,6 +55,14 @@ public class AuthorisedUser extends Model implements Subject {
 
 	public List<ForgotPasswordRequest> getPasswordResets() {
 		return passwordResets;
+	}
+
+	public EmailChangeRequest getEmailChange() {
+		return emailChange;
+	}
+
+	public void setEmailChange(EmailChangeRequest emailChange) {
+		this.emailChange = emailChange;
 	}
 
 	public void setPasswordResets(List<ForgotPasswordRequest> passwordResets) {
@@ -128,6 +138,9 @@ public class AuthorisedUser extends Model implements Subject {
 		return find.where().eq("email", email).findUnique();
 	}
 
+	public boolean checkPassword(String password){
+		return BCrypt.checkpw(password, this.password);
+	}
 
 	
 	/**
@@ -141,7 +154,7 @@ public class AuthorisedUser extends Model implements Subject {
 		AuthorisedUser u = findByEmail(email);
 		if (u == null)return null;
 		
-		if (BCrypt.checkpw(password, u.password)){
+		if (u.checkPassword(password)){
 			return u;
 		}else{
 			return null;

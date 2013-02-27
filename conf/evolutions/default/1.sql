@@ -8,7 +8,17 @@ create table authorised_user (
   email                     varchar(255),
   password                  varchar(255),
   activated                 boolean,
+  email_change_id           bigint,
   constraint pk_authorised_user primary key (id))
+;
+
+create table email_change_request (
+  id                        bigint not null,
+  secret_code               varchar(255),
+  email                     varchar(255),
+  created_at                timestamp,
+  valid_to                  timestamp,
+  constraint pk_email_change_request primary key (id))
 ;
 
 create table forgot_password_request (
@@ -63,6 +73,8 @@ create table authorised_user_user_permission (
 ;
 create sequence authorised_user_seq;
 
+create sequence email_change_request_seq;
+
 create sequence forgot_password_request_seq;
 
 create sequence security_role_seq;
@@ -73,12 +85,14 @@ create sequence user_permission_seq;
 
 create sequence user_session_seq;
 
-alter table forgot_password_request add constraint fk_forgot_password_request_aut_1 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
-create index ix_forgot_password_request_aut_1 on forgot_password_request (authorised_user_id);
-alter table user_confirmation_request add constraint fk_user_confirmation_request_a_2 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
-create index ix_user_confirmation_request_a_2 on user_confirmation_request (authorised_user_id);
-alter table user_session add constraint fk_user_session_user_3 foreign key (user_id) references authorised_user (id) on delete restrict on update restrict;
-create index ix_user_session_user_3 on user_session (user_id);
+alter table authorised_user add constraint fk_authorised_user_emailChange_1 foreign key (email_change_id) references email_change_request (id) on delete restrict on update restrict;
+create index ix_authorised_user_emailChange_1 on authorised_user (email_change_id);
+alter table forgot_password_request add constraint fk_forgot_password_request_aut_2 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_forgot_password_request_aut_2 on forgot_password_request (authorised_user_id);
+alter table user_confirmation_request add constraint fk_user_confirmation_request_a_3 foreign key (authorised_user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_user_confirmation_request_a_3 on user_confirmation_request (authorised_user_id);
+alter table user_session add constraint fk_user_session_user_4 foreign key (user_id) references authorised_user (id) on delete restrict on update restrict;
+create index ix_user_session_user_4 on user_session (user_id);
 
 
 
@@ -100,6 +114,8 @@ drop table if exists authorised_user_security_role;
 
 drop table if exists authorised_user_user_permission;
 
+drop table if exists email_change_request;
+
 drop table if exists forgot_password_request;
 
 drop table if exists security_role;
@@ -113,6 +129,8 @@ drop table if exists user_session;
 SET REFERENTIAL_INTEGRITY TRUE;
 
 drop sequence if exists authorised_user_seq;
+
+drop sequence if exists email_change_request_seq;
 
 drop sequence if exists forgot_password_request_seq;
 

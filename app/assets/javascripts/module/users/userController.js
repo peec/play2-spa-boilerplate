@@ -51,11 +51,31 @@ function ($, _, Backbone, Marionette, app, userSession, breadcrumbs, vent) {
 			// Require login, redirect if not.
 			if (!userSession.requireLogin())return;
 			
-			require(['users/views/UserCPView'], function(View){
-				main.content.show(new View());
+			require(['users/views/UserCPView', 'users/models/UserProfileModel'], function(View, UserProfileModel){
+				var m = new UserProfileModel({id: userSession.get("id")});
+				m.fetch({
+					success: function (model, resp) {
+						main.content.show(new View({model: model}));
+					},
+					error: function () {
+						console.error("Could not find user."); 
+					}
+				});
+				
 			});
 		},
-		
+		confirmEmailChange: function (userId, secretCode) {
+			require(['users/views/EmailConfirmChangeView', 'users/models/EmailConfirmChangeModel'], function(View, EmailConfirmChangeModel){
+				var view = new View({
+					model: new EmailConfirmChangeModel({id: userId, secretCode: secretCode})
+				});
+
+				main.content.show(view);
+				console.log("Trying to confirm email change.");
+				view.confirmChange();
+				
+			});
+		},
 		confirmAccount: function (userId, activationCode) {
 			require(['users/views/ActivationStep1View', 'users/models/ActivationModel'], function(View, ActivationModel){
 				var actView = new View({

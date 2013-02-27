@@ -83,6 +83,44 @@ public class AuthFunctionalTest {
 	}
 
 	@Test
+	public void saveUserProfile () {
+		// Login
+		ObjectNode o = Json.newObject();
+		o.put("email", "admin@admin.com");
+		o.put("password", "admin");
+		Result result = AppHelpers.jsonReq(o, controllers.api.routes.ref.AuthService.login());
+		String token = session(result).get("auth_token");
+
+		assertThat(status(result))
+			.isEqualTo(OK);
+
+		
+		// Now change password.
+		o = Json.newObject();
+		o.put("email", "admin@admin.com");
+		o.put("password", "my new password");
+		o.put("currentPassword", "admin");
+		result = callAction(controllers.api.routes.ref.AuthService.editProfile(), fakeRequest().withSession("auth_token", token).withJsonBody(o));
+		
+		assertThat(status(result))
+			.isEqualTo(OK);
+		
+
+		// Login with the new password
+		o = Json.newObject();
+		o.put("email", "admin@admin.com");
+		o.put("password", "my new password");
+		result = AppHelpers.jsonReq(o, controllers.api.routes.ref.AuthService.login());
+		assertThat(status(result))
+			.isEqualTo(OK);
+	
+		
+		
+	}
+	
+	
+	
+	@Test
 	public void forgotPasswordSubmittion() throws InterruptedException, MessagingException{
 
 		ObjectNode o = Json.newObject();

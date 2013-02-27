@@ -14,6 +14,7 @@ import play.libs.Json;
 import utils.JsonResp;
 import org.codehaus.jackson.JsonNode;           
 import org.codehaus.jackson.node.ObjectNode;
+import org.joda.time.DateTime;
 
 import com.avaje.ebean.Expr;
 
@@ -77,10 +78,6 @@ public class AuthService extends API{
 		}
 	}
 	
-	@SubjectPresent
-	static public Result getUserInfo(){
-		return ok(JsonResp.result(Json.toJson(getUserResponse(CurrentUser.current(), getSecurityToken(ctx())))));
-	}
 	
 	
 	/**
@@ -218,14 +215,64 @@ public class AuthService extends API{
 		
 		AuthorisedUser user = CurrentUser.current();
 		
-		String password = body.get("password").asText();
-		if (password != null && password.isEmpty()){
+		
+		String inEmail = body.get("email").asText();
+		
+		if (body.get("password") != null){
+			String currentPassword = body.get("currentPassword").asText();
+			
+			if (!user.checkPassword(currentPassword)){
+				return badRequest(JsonResp.error("Current password is invalid."));
+			}
+			
+			String password = body.get("password").asText();
 			user.setPassword(password);
 		}
+		if (!inEmail.equals(user.getEmail())){
+			user.setEmailChange(new EmailChangeRequest(inEmail, DateTime.now().plusHours(72)));
+			sendEmailChangeMail(user);
+		}
+		// Regret email change
+		if (user.getEmailChange() != null && body.get("emailChange") == null){
+			user.setEmailChange(null);
+		}
+		
+		
 		
 		user.save();
 		
 		return ok(JsonResp.result(Json.toJson(user)));
+	}
+	
+	static public Result confirmEmailChange (Long userId, String secretCode) {
+		AuthorisedUser user = EmailChangeRequest.findByUserIdAndSecretCode(userId, secretCode);
+		
+		if (user == null){
+			return badRequest(JsonResp.error("Confirm request not found or expired"));
+		}
+		user.setEmail(user.getEmailChange().getEmail());
+		user.setEmailChange(null);
+		user.save();
+		return ok(JsonResp.result(Json.toJson(user), "Email changed to " + user.getEmail()));
+	}
+
+	static private Promise<Boolean> sendEmailChangeMail(final AuthorisedUser user){
+		final String baseUrl = routes.Application.index().absoluteURL(request());
+		
+		return play.libs.Akka.future(
+				new Callable<Boolean>() {
+					public Boolean call() {
+						AuthMailer.sendEmailChangeMail(baseUrl, user);
+						return true;
+					}
+				}
+		);
+	}
+	
+	
+	@SubjectPresent
+	static public Result getEditProfile(){
+		return ok(JsonResp.result(Json.toJson(CurrentUser.current())));
 	}
 	
 	

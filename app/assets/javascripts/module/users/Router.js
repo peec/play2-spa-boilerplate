@@ -9,9 +9,11 @@ define([
 			"user/signup": "signup",
 			"user/signup/confirmation/:userId/:accessCode": "signupConfirmation",
 			"user/forgotpassword": "forgotPassword",
-			"user/forgotpassword/new/:id/:accessCode": "submitForgotPasswordRequest",
+			"user/forgotpassword/new/:userId/:accessCode": "submitForgotPasswordRequest",
 			"user/profile": "userCP",
+			"user/profile/emailchange/:userId/:secretCode": "confirmEmailChange",
 			"user/confirm/:userId/:code": "confirmAccount"
+			
 		}
 	});
 

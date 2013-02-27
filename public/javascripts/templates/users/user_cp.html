@@ -1,0 +1,60 @@
+<div class="row">
+	<h2>Welcome <%= email %></h2>
+</div>
+
+<form class="form-horizontal" id="usercpForm">
+<div class="row">
+
+	<div class="span6">
+		<fieldset>
+			<legend>Email change</legend>
+			<div class="control-group">
+				<label class="control-label">Email</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="eEmail" value="<%= email %>">
+					<% if (emailChange) { %>
+						<div class="alert alert-warning"><p>You have asked to change your email to <strong><%= emailChange.email %></strong>, please confirm this by going to your email inbox. <a class="regretEmailChange clickable">Regret email change.</a></p></div>
+					<% } else { %>
+						<span class="help-block">Note, if you change your email a confirmation email will be sent in order to confirm your new email. Once confirmed by email your new email will be set on your account.</span>
+					<% } %>
+				</div>
+			</div>
+			
+		</fieldset>
+	</div>
+	<div class="span6">
+		<fieldset>
+			<legend>Change password</legend>
+			
+			
+			<div class="control-group">
+				<label class="control-label">Current password</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="eCurrentPassword">
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label">New password</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="ePassword">
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label">Confirm password</label>
+				<div class="controls">
+					<input type="text" class="input-xlarge" id="eConfirmPassword">
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<div class="controls">
+					<button type="submit" id="bSaveProfile" class="btn btn-success">Save profile</button>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+</div>	
+</form>
+
